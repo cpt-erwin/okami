@@ -70,6 +70,7 @@ class Router
     protected function layoutContent()
     {
         ob_start(); // This will stop everything from being displays but still buffers it
+        /** @noinspection PhpIncludeInspection */
         include_once App::$ROOT_DIR . "/views/layouts/main.php";
         return ob_get_clean(); // Returns the content of the "display" buffer
     }
@@ -80,6 +81,7 @@ class Router
             $$param = $value; // If $param can be used as a variable name, then created one and fill it with the value
         }
         ob_start(); // This will stop everything from being displays but still buffers it
+        /** @noinspection PhpIncludeInspection */
         include_once App::$ROOT_DIR . "/views/$view.php";
         return ob_get_clean(); // Returns the content of the "display" buffer
     }

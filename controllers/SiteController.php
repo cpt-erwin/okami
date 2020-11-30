@@ -2,7 +2,6 @@
 
 namespace Okami\Controllers;
 
-use Okami\Core\App;
 use Okami\Core\Controller;
 
 /**
