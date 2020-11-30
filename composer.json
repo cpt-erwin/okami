@@ -18,12 +18,16 @@
         "php" : ">=7.4"
     },
     "require-dev": {},
-    "config": {},
+    "config": {
+        "process-timeout": 0
+    },
     "autoload": {
         "psr-4": {
             "Okami\\": "./"
         }
     },
     "autoload-dev": {},
-    "scripts": {}
+    "scripts": {
+        "start": "php -S localhost:8080 -t public"
+    }
 }
