@@ -39,7 +39,7 @@ class Router
     public function resolve()
     {
         $path = $this->request->getPath();
-        $method = $this->request->getMethod();
+        $method = $this->request->method();
         $callback = $this->routes[$method][$path] ?? false;
         if ($callback === false) {
             $this->response->setStatusCode(404);
@@ -49,7 +49,8 @@ class Router
             return $this->renderView($callback);
         }
         if (is_array($callback)) {
-            $callback[0] = new $callback[0](); // create instance of passed controller
+            App::$app->setController(new $callback[0]()); // create instance of passed controller
+            $callback[0] = App::$app->getController();
         }
         return call_user_func($callback, $this->request);
     }
@@ -69,9 +70,10 @@ class Router
 
     protected function layoutContent()
     {
+        $layout = App::$app->getController()->getLayout();
         ob_start(); // This will stop everything from being displays but still buffers it
         /** @noinspection PhpIncludeInspection */
-        include_once App::$ROOT_DIR . "/views/layouts/main.php";
+        include_once App::$ROOT_DIR . "/views/layouts/$layout.php";
         return ob_get_clean(); // Returns the content of the "display" buffer
     }
 
