@@ -51,14 +51,14 @@ class Router
         return call_user_func($callback);
     }
 
-    public function renderView(string $view)
+    public function renderView(string $view, array $params = [])
     {
         $layoutContent = $this->layoutContent();
-        $viewContent = $this->renderOnlyView($view);
+        $viewContent = $this->renderOnlyView($view, $params);
         return str_replace('{{content}}', $viewContent, $layoutContent);
     }
 
-    public function renderViewContent(string $viewContent)
+    public function renderContent(string $viewContent)
     {
         $layoutContent = $this->layoutContent();
         return str_replace('{{content}}', $viewContent, $layoutContent);
@@ -71,8 +71,11 @@ class Router
         return ob_get_clean(); // Returns the content of the "display" buffer
     }
 
-    protected function renderOnlyView(string $view)
+    protected function renderOnlyView(string $view, array $params)
     {
+        foreach ($params as $param => $value) {
+            $$param = $value; // If $param can be used as a variable name, then created one and fill it with the value
+        }
         ob_start(); // This will stop everything from being displays but still buffers it
         include_once App::$ROOT_DIR . "/views/$view.php";
         return ob_get_clean(); // Returns the content of the "display" buffer
