@@ -26,9 +26,14 @@ class Router
         $this->response = $response;
     }
 
-    public function get($path, $callback)
+    public function get(string $path, $callback)
     {
         $this->routes['get'][$path] = $callback;
+    }
+
+    public function post(string $path, $callback)
+    {
+        $this->routes['post'][$path] = $callback;
     }
 
     public function resolve()
@@ -38,7 +43,7 @@ class Router
         $callback = $this->routes[$method][$path] ?? false;
         if ($callback === false) {
             $this->response->setStatusCode(404);
-            return "Not found!";
+            return $this->renderView("_404");
         }
         if (is_string($callback)) {
             return $this->renderView($callback);
@@ -50,6 +55,12 @@ class Router
     {
         $layoutContent = $this->layoutContent();
         $viewContent = $this->renderOnlyView($view);
+        return str_replace('{{content}}', $viewContent, $layoutContent);
+    }
+
+    public function renderViewContent(string $viewContent)
+    {
+        $layoutContent = $this->layoutContent();
         return str_replace('{{content}}', $viewContent, $layoutContent);
     }
 
