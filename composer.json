@@ -1,0 +1,29 @@
+{
+    "name": "tumi-soft/okami",
+    "type": "project",
+    "description": "A simple PHP MVC made from scratch for learning purposes using PHP 7.4",
+    "keywords": [
+        "php",
+        "mvc"
+    ],
+    "homepage": "https://github.com/tumi-soft/okami",
+    "license": "apache-2.0",
+    "authors": [
+        {
+            "name": "Michal Tuček",
+            "email": "michaltk1@gmail.com"
+        }
+    ],
+    "require": {
+        "php" : ">=7.4"
+    },
+    "require-dev": {},
+    "config": {},
+    "autoload": {
+        "psr-4": {
+            "Okami\\": "./"
+        }
+    },
+    "autoload-dev": {},
+    "scripts": {}
+}
