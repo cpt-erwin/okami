@@ -11,11 +11,19 @@ namespace Okami\Core;
 class Router
 {
     public Request $request;
+    public Response $response;
     public array $routes = [];
 
-    public function __construct(Request $request)
+    /**
+     * Router constructor.
+     *
+     * @param Request $request
+     * @param Response $response
+     */
+    public function __construct(Request $request, Response $response)
     {
         $this->request = $request;
+        $this->response = $response;
     }
 
     public function get($path, $callback)
@@ -29,7 +37,7 @@ class Router
         $method = $this->request->getMethod();
         $callback = $this->routes[$method][$path] ?? false;
         if ($callback === false) {
-            App::$app->response->setStatusCode(404);
+            $this->response->setStatusCode(404);
             return "Not found!";
         }
         if (is_string($callback)) {
