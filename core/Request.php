@@ -24,4 +24,27 @@ class Request
     {
         return strtolower($_SERVER['REQUEST_METHOD']);
     }
+
+    public function getBody()
+    {
+        $body = [];
+        if ($this->getMethod() === 'get') {
+            foreach ($_GET as $key => $value) {
+                $body[$key] = filter_input(INPUT_GET, $key, FILTER_SANITIZE_SPECIAL_CHARS);
+                /**
+                 * 1) Gets the content of the super global var $_GET
+                 * 2) Searches for a $key
+                 * 3) Takes the the value of $_GET[$key] and removes the invalid (dangerous?) characters
+                 * 4) Returns the sanitized value
+                 */
+            }
+        }
+        if ($this->getMethod() === 'post') {
+            foreach ($_GET as $key => $value) {
+                $body[$key] = filter_input(INPUT_POST, $key, FILTER_SANITIZE_SPECIAL_CHARS);
+            }
+        }
+
+        return $body;
+    }
 }
