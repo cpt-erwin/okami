@@ -3,6 +3,7 @@
 namespace Okami\Controllers;
 
 use Okami\Core\Controller;
+use Okami\Core\Request;
 
 /**
  * Class SiteController
@@ -25,8 +26,12 @@ class SiteController extends Controller
         return $this->render('contact');
     }
 
-    public function handleContact()
+    public function handleContact(Request $request)
     {
-        return "Handling submitted data...";
+         $body = $request->getBody();
+
+         // TODO: Some $body validation logic...
+
+         return "Handling submitted data...";
     }
 }
