@@ -73,7 +73,7 @@ class Router
         $layout = App::$app->getController()->getLayout();
         ob_start(); // This will stop everything from being displays but still buffers it
         /** @noinspection PhpIncludeInspection */
-        include_once App::$ROOT_DIR . "/views/layouts/$layout.php";
+        include_once App::$ROOT_DIR . "/views/layouts/$layout.phtml";
         return ob_get_clean(); // Returns the content of the "display" buffer
     }
 
@@ -84,7 +84,7 @@ class Router
         }
         ob_start(); // This will stop everything from being displays but still buffers it
         /** @noinspection PhpIncludeInspection */
-        include_once App::$ROOT_DIR . "/views/$view.php";
+        include_once App::$ROOT_DIR . "/views/$view.phtml";
         return ob_get_clean(); // Returns the content of the "display" buffer
     }
 }
