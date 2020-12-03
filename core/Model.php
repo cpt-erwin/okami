@@ -102,7 +102,7 @@ abstract class Model
      */
     public function hasError(string $attribute): bool
     {
-        return $this->errors[$attribute] ?? false;
+        return array_key_exists($attribute, $this->errors);
     }
 
     /**
