@@ -95,8 +95,24 @@ abstract class Model
         ];
     }
 
-    public function hasError($attribute): bool
+    /**
+     * @param string $attribute
+     *
+     * @return bool
+     */
+    public function hasError(string $attribute): bool
     {
         return $this->errors[$attribute] ?? false;
+    }
+
+    /**
+     * @param string $attribute
+     *
+     * @return string
+     */
+    public function getFirstError(string $attribute): string
+    {
+        $errors = $this->errors[$attribute] ?? [];
+        return $errors[0] ?? '';
     }
 }
