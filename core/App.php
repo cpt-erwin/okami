@@ -22,7 +22,7 @@ class App
     public Database $db;
     public static App $app;
     public Controller $controller;
-    public ?UserModel $user;
+    public ?UserModel $user = null;
 
     public function __construct(string $rootPath, array $config)
     {
@@ -40,10 +40,7 @@ class App
         if ($primaryValue) {
             $primaryKey = $this->userClass::primaryKey();
             $this->user = $this->userClass::findOne([$primaryKey => $primaryValue]);
-        } else {
-            $this->user = null;
         }
-
     }
 
     public function run() {
