@@ -29,6 +29,27 @@ abstract class DbModel extends Model
         return $statement->execute();
     }
 
+    /**
+     * @param array $where e.g. ['email' => 'email@example.com', 'status' => 1]
+     *
+     * @return mixed
+     */
+    public function findOne(array $where)
+    {
+        // Can't use self here since it's abstract
+        // static will return the child's method implementation value
+        $tableName = static::tableName();
+        $attributes = array_keys($where);
+        $sql = implode("AND ", array_map(fn($attribute) => "$attribute = :$attribute", $attributes));
+        $statement = self::prepare("SELECT * FROM $tableName WHERE $sql");
+        foreach ($where as $key => $value) {
+            $statement->bindValue(":$key", $value);
+        }
+
+        $statement->execute();
+        return $statement->fetchObject(static::class);
+    }
+
     public static function prepare(string $SQL)
     {
         return App::$app->db->pdo->prepare($SQL);
