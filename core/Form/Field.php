@@ -45,7 +45,7 @@ class Field
                 </div>
             </div>
         ',
-            $this->attribute,
+            $this->getLabel($this->attribute),
             $this->type,
             $this->attribute,
             $this->model->{$this->attribute},

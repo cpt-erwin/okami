@@ -37,6 +37,19 @@ abstract class Model
     abstract public function rules(): array;
 
     /**
+     * @return array
+     */
+    public function labels(): array
+    {
+        return [];
+    }
+
+    public function getLabel(string $attribute): string
+    {
+        return $this->labels()[$attribute] ?? $attribute;
+    }
+
+    /**
      * @return bool
      */
     public function validate(): bool
@@ -61,6 +74,7 @@ abstract class Model
                     $this->addError($attribute, self::RULE_MAX, $rule);
                 }
                 if ($ruleName === self::RULE_MATCH && $value !== $this->{$rule['match']}) {
+                    $rule['match'] = $this->getLabel($rule['match']);
                     $this->addError($attribute, self::RULE_MAX, $rule);
                 }
                 if ($ruleName === self::RULE_UNIQUE) {
@@ -72,7 +86,7 @@ abstract class Model
                     $statement->execute();
                     $record = $statement->fetch();
                     if ($record) {
-                        $this->addError($attribute, self::RULE_UNIQUE, ['field' => $attribute]);
+                        $this->addError($attribute, self::RULE_UNIQUE, ['field' => $this->getLabel($attribute)]);
                     }
                 }
             }
