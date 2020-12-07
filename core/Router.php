@@ -52,7 +52,7 @@ class Router
             App::$app->setController(new $callback[0]()); // create instance of passed controller
             $callback[0] = App::$app->getController();
         }
-        return call_user_func($callback, $this->request);
+        return call_user_func($callback, $this->request, $this->response);
     }
 
     public function renderView(string $view, array $params = [])
