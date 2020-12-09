@@ -2,6 +2,8 @@
 
 namespace Okami\Core;
 
+use Okami\Core\Middlewares\Middleware;
+
 /**
  * Class Controller
  *
@@ -11,6 +13,11 @@ namespace Okami\Core;
 class Controller
 {
     private string $layout = 'main';
+
+    /**
+     * @var Middleware[]
+     */
+    public array $middlewares;
 
     public function render(string $view, array $params = [])
     {
@@ -25,5 +32,10 @@ class Controller
     public function setLayout(string $layout): void
     {
         $this->layout = $layout;
+    }
+
+    public function registerMiddleware(Middleware $middleware): void
+    {
+        $this->middlewares[] = $middleware;
     }
 }
