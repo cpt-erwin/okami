@@ -70,7 +70,10 @@ class Router
 
     protected function layoutContent()
     {
-        $layout = App::$app->getController()->getLayout();
+        $layout = App::$app->layout;
+        if (App::$app->getController()) {
+            $layout = App::$app->getController()->getLayout();
+        }
         ob_start(); // This will stop everything from being displays but still buffers it
         /** @noinspection PhpIncludeInspection */
         include_once App::$ROOT_DIR . "/views/layouts/$layout.phtml";

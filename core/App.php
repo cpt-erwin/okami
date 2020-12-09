@@ -2,8 +2,6 @@
 
 namespace Okami\Core;
 
-use http\Client\Curl\User;
-
 /**
  * Class App
  *
@@ -14,6 +12,8 @@ class App
 {
     public static string $ROOT_DIR;
 
+
+    public string $layout = 'main';
     public string $userClass;
     public Router $router;
     public Request $request;
@@ -21,7 +21,7 @@ class App
     public Session $session;
     public Database $db;
     public static App $app;
-    public Controller $controller;
+    public ?Controller $controller = null;
     public ?UserModel $user = null;
 
     public function __construct(string $rootPath, array $config)
