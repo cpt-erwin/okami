@@ -43,6 +43,12 @@ class InputField extends BaseField
         return $this;
     }
 
+    public function numberField()
+    {
+        $this->type = self::TYPE_NUMBER;
+        return $this;
+    }
+
     public function renderInput(): string
     {
         return sprintf('<input type="%s" name="%s" value="%s" class="form-control%s">',
