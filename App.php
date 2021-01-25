@@ -13,8 +13,12 @@ use Okami\Core\DB\Database;
  */
 class App
 {
-    public static string $ROOT_DIR;
+    const EVENT_BEFORE_REQUEST = 'beforeRequest';
+    const EVENT_AFTER_REQUEST = 'afterRequest';
 
+    protected array $eventListeners = [];
+
+    public static string $ROOT_DIR;
 
     public string $layout = 'main';
     public string $userClass;
@@ -49,6 +53,7 @@ class App
     }
 
     public function run() {
+        $this->triggerEvent(self::EVENT_BEFORE_REQUEST);
         try {
             echo $this->router->resolve();
         } catch (Exception $e) {
@@ -57,6 +62,7 @@ class App
                 'exception' => $e
             ]);
         }
+        $this->triggerEvent(self::EVENT_AFTER_REQUEST);
     }
 
     /**
@@ -93,5 +99,18 @@ class App
     public static function isGuest(): bool
     {
         return !self::$app->user;
+    }
+
+    public function onEvent(string $eventName, callable $callback): void
+    {
+        $this->eventListeners[$eventName][] = $callback;
+    }
+
+    private function triggerEvent(string $eventName): void
+    {
+        $callbacks = $this->eventListeners[$eventName] ?? [];
+        foreach ($callbacks as $callback) {
+            call_user_func($callback);
+        }
     }
 }
