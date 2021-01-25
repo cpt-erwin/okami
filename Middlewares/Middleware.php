@@ -10,5 +10,5 @@ namespace Okami\Core\Middlewares;
  */
 abstract class Middleware
 {
-
+    abstract public function execute();
 }

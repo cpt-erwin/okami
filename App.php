@@ -2,6 +2,9 @@
 
 namespace Okami\Core;
 
+use Exception;
+use Okami\Core\DB\Database;
+
 /**
  * Class App
  *
@@ -20,9 +23,10 @@ class App
     public Response $response;
     public Session $session;
     public Database $db;
+    public View $view;
+    public ?UserModel $user = null;
     public static App $app;
     public ?Controller $controller = null;
-    public ?UserModel $user = null;
 
     public function __construct(string $rootPath, array $config)
     {
@@ -32,6 +36,7 @@ class App
         $this->response = new Response();
         $this->session = new Session();
         $this->router = new Router($this->request, $this->response);
+        $this->view = new View();
 
         $this->db = new Database($config['db']);
         $this->userClass = $config['userClass'];
@@ -44,13 +49,20 @@ class App
     }
 
     public function run() {
-        echo $this->router->resolve();
+        try {
+            echo $this->router->resolve();
+        } catch (Exception $e) {
+            $this->response->setStatusCode($e->getCode());
+            echo $this->view->renderView('_error', [
+                'exception' => $e
+            ]);
+        }
     }
 
     /**
-     * @return Controller
+     * @return ?Controller
      */
-    public function getController(): Controller
+    public function getController(): ?Controller
     {
         return $this->controller;
     }
@@ -78,7 +90,7 @@ class App
         $this->session->remove('user');
     }
 
-    public function isGuest(): bool
+    public static function isGuest(): bool
     {
         return !self::$app->user;
     }

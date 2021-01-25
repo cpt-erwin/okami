@@ -2,6 +2,8 @@
 
 namespace Okami\Core;
 
+use Okami\Core\DB\DbModel;
+
 /**
  * Class UserModel
  *

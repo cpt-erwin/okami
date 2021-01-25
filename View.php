@@ -3,62 +3,19 @@
 namespace Okami\Core;
 
 /**
- * Class Router
+ * Class View
  *
  * @author Michal Tuček <michaltk1@gmail.com>
  * @package Okami\Core
  */
-class Router
+class View
 {
-    public Request $request;
-    public Response $response;
-    public array $routes = [];
-
-    /**
-     * Router constructor.
-     *
-     * @param Request $request
-     * @param Response $response
-     */
-    public function __construct(Request $request, Response $response)
-    {
-        $this->request = $request;
-        $this->response = $response;
-    }
-
-    public function get(string $path, $callback)
-    {
-        $this->routes['get'][$path] = $callback;
-    }
-
-    public function post(string $path, $callback)
-    {
-        $this->routes['post'][$path] = $callback;
-    }
-
-    public function resolve()
-    {
-        $path = $this->request->getPath();
-        $method = $this->request->method();
-        $callback = $this->routes[$method][$path] ?? false;
-        if ($callback === false) {
-            $this->response->setStatusCode(404);
-            return $this->renderView("_404");
-        }
-        if (is_string($callback)) {
-            return $this->renderView($callback);
-        }
-        if (is_array($callback)) {
-            App::$app->setController(new $callback[0]()); // create instance of passed controller
-            $callback[0] = App::$app->getController();
-        }
-        return call_user_func($callback, $this->request, $this->response);
-    }
+    public string $title = '';
 
     public function renderView(string $view, array $params = [])
     {
-        $layoutContent = $this->layoutContent();
         $viewContent = $this->renderOnlyView($view, $params);
+        $layoutContent = $this->layoutContent();
         return str_replace('{{content}}', $viewContent, $layoutContent);
     }
 
