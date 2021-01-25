@@ -22,7 +22,7 @@ abstract class Model
     /**
      * @param array $data
      */
-    public function loadData(array $data): void
+    public function loadData(array $data)
     {
         foreach ($data as $key => $value) {
             if (property_exists($this, $key)) {
@@ -100,7 +100,7 @@ abstract class Model
      * @param string $rule
      * @param array $params
      */
-    public function addErrorForRule(string $attribute, string $rule, array $params = []): void
+    public function addErrorForRule(string $attribute, string $rule, array $params = [])
     {
         $message = $this->errorMessages()[$rule] ?? '';
         foreach ($params as $key => $value) {
@@ -113,7 +113,7 @@ abstract class Model
      * @param string $attribute
      * @param string $message
      */
-    public function addError(string $attribute, string $message): void
+    public function addError(string $attribute, string $message)
     {
         $this->errors[$attribute][] = $message;
     }

@@ -40,7 +40,7 @@ class Session
         return $_SESSION[self::FLASH_KEY][$key]['value'] ?? null;
     }
 
-    public function set(string $key, $value): void
+    public function set(string $key, $value)
     {
         $_SESSION[$key] = $value;
     }
@@ -50,7 +50,7 @@ class Session
         return $_SESSION[$key] ?? false;
     }
 
-    public function remove(string $key): void
+    public function remove(string $key)
     {
         unset($_SESSION[$key]);
     }

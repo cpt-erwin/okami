@@ -31,12 +31,12 @@ class Controller
         return $this->layout;
     }
 
-    public function setLayout(string $layout): void
+    public function setLayout(string $layout)
     {
         $this->layout = $layout;
     }
 
-    public function registerMiddleware(Middleware $middleware): void
+    public function registerMiddleware(Middleware $middleware)
     {
         $this->middlewares[] = $middleware;
     }

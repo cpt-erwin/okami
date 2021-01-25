@@ -52,7 +52,8 @@ class App
         }
     }
 
-    public function run() {
+    public function run()
+    {
         $this->triggerEvent(self::EVENT_BEFORE_REQUEST);
         try {
             echo $this->router->resolve();
@@ -76,7 +77,7 @@ class App
     /**
      * @param Controller $controller
      */
-    public function setController(Controller $controller): void
+    public function setController(Controller $controller)
     {
         $this->controller = $controller;
     }
@@ -101,12 +102,12 @@ class App
         return !self::$app->user;
     }
 
-    public function onEvent(string $eventName, callable $callback): void
+    public function onEvent(string $eventName, callable $callback)
     {
         $this->eventListeners[$eventName][] = $callback;
     }
 
-    private function triggerEvent(string $eventName): void
+    private function triggerEvent(string $eventName)
     {
         $callbacks = $this->eventListeners[$eventName] ?? [];
         foreach ($callbacks as $callback) {
