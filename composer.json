@@ -19,7 +19,8 @@
     "require": {
         "php" : ">=7.4",
         "ext-pdo": "*",
-        "vlucas/phpdotenv": "^5.2"
+        "vlucas/phpdotenv": "^5.2",
+        "filp/whoops": "^2.9"
     },
     "require-dev": {},
     "config": {

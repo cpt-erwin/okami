@@ -20,6 +20,8 @@ class App
 
     public static string $ROOT_DIR;
 
+    private bool $debug = false;
+
     public string $layout = 'main';
     public string $userClass;
     public Router $router;
@@ -42,6 +44,14 @@ class App
         $this->router = new Router($this->request, $this->response);
         $this->view = new View();
 
+        $this->debug = $config['debug'];
+
+        if($this->debug) {
+            $whoops = new \Whoops\Run;
+            $whoops->pushHandler(new \Whoops\Handler\PrettyPageHandler);
+            $whoops->register();
+        }
+
         $this->db = new Database($config['db']);
         $this->userClass = $config['userClass'];
 
@@ -52,16 +62,23 @@ class App
         }
     }
 
+    /**
+     * @throws Exception
+     */
     public function run()
     {
         $this->triggerEvent(self::EVENT_BEFORE_REQUEST);
         try {
             echo $this->router->resolve();
         } catch (Exception $e) {
-            $this->response->setStatusCode($e->getCode());
-            echo $this->view->renderView('_error', [
-                'exception' => $e
-            ]);
+            if($this->debug) {
+                throw $e;
+            } else {
+                $this->response->setStatusCode($e->getCode());
+                echo $this->view->renderView('_error', [
+                    'exception' => $e
+                ]);
+            }
         }
         $this->triggerEvent(self::EVENT_AFTER_REQUEST);
     }
