@@ -12,9 +12,9 @@ class TextareaField extends BaseField
 {
     public function renderInput(): string
     {
-        return sprintf('<textarea name="%s" class="form-control%s">%s</textarea>',
+        return sprintf('<textarea name="%s" class="textarea %s">%s</textarea>',
             $this->attribute,
-            $this->model->hasError($this->attribute) ? ' is-invalid' : '',
+            $this->model->hasError($this->attribute) ? ' is-danger' : '',
             $this->model->{$this->attribute}
         );
     }
