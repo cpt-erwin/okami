@@ -2,6 +2,7 @@
 
 namespace Okami\Core\DB;
 
+use LogicException;
 use Okami\Core\App;
 use PDO;
 use PDOException;
@@ -30,8 +31,13 @@ class Database extends PDO
     {
         $this->createMigrationTable();
         $appliedMigrations = $this->getAppliedMigrations();
+        $migrationsDir = App::$ROOT_DIR . '/migrations';
+        if(!is_dir($migrationsDir)) {
+            throw new LogicException('Trying to scan nonexistent directory \'' . $migrationsDir . '\'!');
+        }
 
-        $files = scandir(App::$ROOT_DIR . '/migrations');
+        /** @var string[] $files */
+        $files = scandir($migrationsDir);
         $pendingMigrations = array_diff($files, $appliedMigrations);
 
         $newMigrations = [];
@@ -40,7 +46,7 @@ class Database extends PDO
                 continue;
             }
 
-            require_once App::$ROOT_DIR . '/migrations/' . $pendingMigration;
+            require_once $migrationsDir . $pendingMigration;
             $className = pathinfo($pendingMigration, PATHINFO_FILENAME);
             $instance = new $className();
             $this->log("Applying migration $pendingMigration");
