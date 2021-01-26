@@ -10,7 +10,7 @@ use Okami\Core\Middlewares\Middleware;
  * @author Michal Tuček <michaltk1@gmail.com>
  * @package Okami\Core
  */
-class Controller
+abstract class Controller
 {
     private string $layout = 'main';
     public string $action = '';
