@@ -4,24 +4,26 @@ namespace Okami\Core\DB;
 
 use Okami\Core\App;
 use PDO;
+use PDOException;
 
 /**
  * Class Database
  *
  * @author Michal Tuček <michaltk1@gmail.com>
- * @package Okami\Core
+ * @package Okami\Core\DB
  */
-class Database
+class Database extends PDO
 {
-    public PDO $pdo;
-
+    /**
+     * Database constructor.
+     *
+     * @param array $config
+     * @throws PDOException
+     */
     public function __construct(array $config)
     {
-        $dsn = $config['dsn'] ?? '';
-        $user = $config['user'] ?? '';
-        $password = $config['password'] ?? '';
-        $this->pdo = new PDO($dsn, $user, $password);
-        $this->pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION); // If any error occurs throw an exception
+        parent::__construct($config['dsn'] ?? '', $config['user'] ?? '', $config['password'] ?? '');
+        $this->setAttribute(self::ATTR_ERRMODE, self::ERRMODE_EXCEPTION); // If any error occurs throw an exception
     }
 
     public function applyMigrations()
@@ -56,7 +58,7 @@ class Database
 
     public function createMigrationTable()
     {
-        $this->pdo->exec("CREATE TABLE IF NOT EXISTS migrations (
+        $this->exec("CREATE TABLE IF NOT EXISTS migrations (
             id INT AUTO_INCREMENT PRIMARY KEY,
             migration VARCHAR(255),
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP 
@@ -65,7 +67,7 @@ class Database
 
     public function getAppliedMigrations(): array
     {
-        $statement = $this->pdo->prepare("SELECT migration FROM migrations;");
+        $statement = $this->prepare("SELECT migration FROM migrations;");
         $statement->execute();
 
         return $statement->fetchAll(PDO::FETCH_COLUMN); // Return migration column values as a single dimension array
@@ -74,7 +76,7 @@ class Database
     public function saveMigrations(array $migrations)
     {
         $values = implode(",", array_map(fn($migration) => "('$migration')", $migrations));
-        $statement = $this->pdo->prepare("INSERT INTO migrations (migration) VALUES $values;");
+        $statement = $this->prepare("INSERT INTO migrations (migration) VALUES $values;");
         $statement->execute();
     }
 

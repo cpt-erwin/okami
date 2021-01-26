@@ -4,12 +4,14 @@ namespace Okami\Core\DB;
 
 use Okami\Core\App;
 use Okami\Core\Model;
+use PDOException;
+use PDOStatement;
 
 /**
  * Class DbModel
  *
  * @author Michal Tuček <michaltk1@gmail.com>
- * @package Okami\Core
+ * @package Okami\Core\DB
  */
 abstract class DbModel extends Model
 {
@@ -38,6 +40,7 @@ abstract class DbModel extends Model
      * @param array $where e.g. ['email' => 'email@example.com', 'status' => 1]
      *
      * @return mixed
+     * @throws PDOException
      */
     public function findOne(array $where)
     {
@@ -55,8 +58,14 @@ abstract class DbModel extends Model
         return $statement->fetchObject(static::class);
     }
 
-    public static function prepare(string $SQL)
+    /**
+     * @param string $SQL
+     *
+     * @return PDOStatement
+     * @throws PDOException
+     */
+    public static function prepare(string $SQL): PDOStatement
     {
-        return App::$app->db->pdo->prepare($SQL);
+        return App::$app->db->prepare($SQL);
     }
 }
