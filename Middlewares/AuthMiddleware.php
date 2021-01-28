@@ -13,27 +13,18 @@ use Okami\Core\Exceptions\ForbiddenException;
  */
 class AuthMiddleware extends Middleware
 {
-    public array $actions = [];
-
-    /**
-     * AuthMiddleware constructor.
-     *
-     * @param array $actions
-     */
-    public function __construct(array $actions = [])
-    {
-        $this->actions = $actions;
-    }
-
     /**
      * @throws ForbiddenException
      */
-    public function execute()
+    public function before()
     {
         if(App::isGuest()) {
-            if (empty($this->actions) || in_array(App::$app->controller->action, $this->actions)) {
-                throw new ForbiddenException();
-            }
+            throw new ForbiddenException();
         }
+    }
+
+    public function after()
+    {
+        // TODO: Implement after() method.
     }
 }
