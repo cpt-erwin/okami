@@ -2,8 +2,6 @@
 
 namespace Okami\Core;
 
-use Okami\Core\Middlewares\Middleware;
-
 /**
  * Class Controller
  *

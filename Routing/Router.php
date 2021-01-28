@@ -34,19 +34,23 @@ class Router
     /**
      * @param string $path
      * @param string|callable|array $callback
+     *
+     * @return Route
      */
-    public function get(string $path, $callback)
+    public function get(string $path, $callback): Route
     {
-        $this->addRoute('get', $path, $callback);
+        return $this->addRoute('get', $path, $callback);
     }
 
     /**
      * @param string $path
      * @param string|callable|array $callback
+     *
+     * @return Route
      */
-    public function post(string $path, $callback)
+    public function post(string $path, $callback): Route
     {
-        $this->addRoute('post', $path, $callback);
+        return $this->addRoute('post', $path, $callback);
     }
 
     /**
