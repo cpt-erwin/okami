@@ -10,6 +10,8 @@ namespace Okami\Core;
  */
 class Response
 {
+    public $body = '';
+
     public function setStatusCode(int $code)
     {
         http_response_code($code);
