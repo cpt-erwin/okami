@@ -1,6 +1,6 @@
 <?php
 
-namespace Okami\Core;
+namespace Okami\Core\Routing;
 
 use LogicException;
 
@@ -8,7 +8,7 @@ use LogicException;
  * Class Route
  *
  * @author Michal Tuček <michaltk1@gmail.com>
- * @package Okami\Core
+ * @package Okami\Core\Routing
  */
 class Route
 {

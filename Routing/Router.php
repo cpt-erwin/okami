@@ -1,15 +1,18 @@
 <?php
 
-namespace Okami\Core;
+namespace Okami\Core\Routing;
 
 use LogicException;
+use Okami\Core\App;
 use Okami\Core\Exceptions\NotFoundException;
+use Okami\Core\Request;
+use Okami\Core\Response;
 
 /**
  * Class Router
  *
  * @author Michal Tuček <michaltk1@gmail.com>
- * @package Okami\Core
+ * @package Okami\Core\Routing
  */
 class Router
 {

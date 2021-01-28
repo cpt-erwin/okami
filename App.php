@@ -4,6 +4,7 @@ namespace Okami\Core;
 
 use Exception;
 use Okami\Core\DB\Database;
+use Okami\Core\Routing\Router;
 
 /**
  * Class App
