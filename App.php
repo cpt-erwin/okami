@@ -70,7 +70,8 @@ class App
     {
         $this->triggerEvent(self::EVENT_BEFORE_REQUEST);
         try {
-            echo $this->router->resolve();
+            $response = $this->router->resolve();
+            echo $response->body;
         } catch (Exception $e) {
             if($this->debug) {
                 throw $e;
