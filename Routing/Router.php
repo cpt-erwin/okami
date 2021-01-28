@@ -3,7 +3,6 @@
 namespace Okami\Core\Routing;
 
 use LogicException;
-use Okami\Core\App;
 use Okami\Core\Exceptions\NotFoundException;
 use Okami\Core\Request;
 use Okami\Core\Response;
@@ -54,14 +53,35 @@ class Router
      * @param string $method
      * @param string $path
      * @param string|callable|array $callback
+     *
+     * @return Route
      */
-    private function addRoute(string $method, string $path, $callback)
+    private function addRoute(string $method, string $path, $callback): Route
     {
-        $route = new Route($path, $callback);
-        $this->routes[$method][] = $route;
+        /** RENDER TEMPLATE **/
+        if (is_string($callback)) {
+            return $this->routes[$method][] = new TemplateRoute($path, $callback);
+        }
+
+        /** CALL CONTROLLER **/
+        if (is_array($callback)) {
+            return $this->routes[$method][] = new ControllerRoute($path, $callback);
+        }
+
+        /** EXECUTE FUNCTION **/
+        if (is_callable($callback)) {
+            return $this->routes[$method][] = new FunctionRoute($path, $callback);
+        }
+
+        // Shouldn't ever reach this statement but just to be sure...
+        throw new LogicException('Requires callback of type string|callable|array but callback with type ' . gettype($callback) . ' passed instead!');
     }
 
-    public function resolve()
+    /**
+     * @return Response
+     * @throws NotFoundException
+     */
+    public function resolve(): Response
     {
         $path = $this->request->getPath();
         $method = $this->request->method();
@@ -71,31 +91,7 @@ class Router
             throw new NotFoundException();
         }
 
-        /** RENDER TEMPLATE **/
-        if (is_string($route->getCallback())) {
-            return App::$app->view->renderView($route->getCallback());
-        }
-
-        /** CALL CONTROLLER **/
-        if (is_array($route->getCallback())) {
-            $callback = $route->getCallback();
-            App::$app->setController(new $callback[0]()); // create instance of passed controller
-            App::$app->controller->action = $callback[1];
-            $callback[0] = App::$app->getController();
-
-            foreach (App::$app->controller->getMiddlewares() as $middleware) {
-                $middleware->execute();
-            }
-            return call_user_func($callback, $this->request, $this->response, $route->getParams());
-        }
-
-        /** EXECUTE FUNCTION **/
-        if (is_callable($route->getCallback())) {
-            return call_user_func($route->getCallback(), $this->request, $this->response, $route->getParams());
-        }
-
-        // Shouldn't ever reach this statement but just to be sure...
-        throw new LogicException('Requires callback of type string|callable|array but callback with type ' . gettype($route->getCallback()) . ' passed instead!');
+        return $route->execute();
     }
 
     private function getRoute(string $method, string $path): ?Route

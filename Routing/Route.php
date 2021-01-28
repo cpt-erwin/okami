@@ -3,6 +3,8 @@
 namespace Okami\Core\Routing;
 
 use LogicException;
+use Okami\Core\Middlewares\Middleware;
+use Okami\Core\Response;
 
 /**
  * Class Route
@@ -10,8 +12,11 @@ use LogicException;
  * @author Michal Tuček <michaltk1@gmail.com>
  * @package Okami\Core\Routing
  */
-class Route
+abstract class Route
 {
+    /** @var Middleware[] */
+    public array $middlewares = [];
+
     private array $paths;
 
     /** @var array|callable|string $callback */
@@ -40,7 +45,7 @@ class Route
         $this->callback = $callback;
     }
 
-    public function analyzePath(string $path, string $root = ''): array
+    private function analyzePath(string $path, string $root = ''): array
     {
         // paths example
         // ''
@@ -104,6 +109,16 @@ class Route
         return $paths;
     }
 
+    abstract public function handleCallback(): Response;
+
+    public function execute(): Response
+    {
+        if($this->hasPendingMiddlewares()) {
+            return $this->callNextMiddleware();
+        }
+        return $this->handleCallback();
+    }
+
     public function match(string $pathToMatch): bool
     {
         foreach($this->paths as $path) {
@@ -122,12 +137,12 @@ class Route
     /**
      * @return array|callable|string
      */
-    public function getCallback()
+    protected function getCallback()
     {
         return $this->callback;
     }
 
-    public function getParams(): array
+    protected function getParams(): array
     {
         return $this->params;
     }
@@ -138,5 +153,35 @@ class Route
             throw new LogicException('Unknown pattern \'' . $pattern . '\' used!');
         }
         return $this->patterns[$pattern];
+    }
+
+    public function withMiddleware(string $middlewareClass): Route
+    {
+        $this->middlewares[] = $middlewareClass;
+        return $this;
+    }
+
+    public function withMiddlewares(array $middlewareClasses): Route
+    {
+        foreach ($middlewareClasses as $middlewareClass) {
+            $this->withMiddleware($middlewareClass);
+        }
+        return $this;
+    }
+
+    public function hasPendingMiddlewares(): bool
+    {
+        return !empty($this->middlewares);
+    }
+
+    public function callNextMiddleware(): Response
+    {
+        $middleware = array_shift($this->middlewares);
+        if(!is_null($middleware)) {
+            /** @var Middleware $middleware */
+            $middleware = new $middleware($this);
+            return $middleware->execute();
+        }
+        throw new LogicException('Trying to call the next middleware but there\'s no other middleware!');
     }
 }
