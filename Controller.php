@@ -15,12 +15,6 @@ abstract class Controller
     private string $layout = 'main';
     public string $action = '';
 
-
-    /**
-     * @var Middleware[]
-     */
-    protected array $middlewares = [];
-
     public function render(string $view, array $params = [])
     {
         return App::$app->view->renderView($view, $params);
@@ -34,18 +28,5 @@ abstract class Controller
     public function setLayout(string $layout)
     {
         $this->layout = $layout;
-    }
-
-    public function registerMiddleware(Middleware $middleware)
-    {
-        $this->middlewares[] = $middleware;
-    }
-
-    /**
-     * @return Middleware[]
-     */
-    public function getMiddlewares(): array
-    {
-        return $this->middlewares;
     }
 }
