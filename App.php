@@ -23,7 +23,7 @@ class App
 
     public static string $ROOT_DIR;
 
-    private bool $debug = false;
+    private bool $debug;
 
     public string $layout = 'main';
     public string $userClass;
@@ -49,7 +49,7 @@ class App
         $this->router = new Router($this->request, $this->response);
         $this->view = new View();
 
-        $this->debug = $config['debug'];
+        $this->debug = $config['debug'] ?: false;
 
         if($this->debug) {
             $whoops = new \Whoops\Run;
