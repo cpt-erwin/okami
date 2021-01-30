@@ -112,7 +112,7 @@ abstract class Route implements ExecutableInterface
         return $paths;
     }
 
-    abstract public  function execute(): Response;
+    abstract public function execute(): Response;
 
     public function match(string $pathToMatch): bool
     {
