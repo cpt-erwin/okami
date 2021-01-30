@@ -5,7 +5,6 @@ namespace Okami\Core\Routing;
 use LogicException;
 use Okami\Core\App;
 use Okami\Core\Exceptions\NotFoundException;
-use Okami\Core\Middlewares\Middleware;
 use Okami\Core\Request;
 use Okami\Core\Response;
 
@@ -20,7 +19,6 @@ class Router
     public Request $request;
     public Response $response;
     public array $routes = [];
-    public array $serializedRoutes = [];
 
     /**
      * Router constructor.
@@ -146,9 +144,8 @@ class Router
             throw new LogicException('Requires callback of type string|callable|array but callback with type ' . gettype($callback) . ' passed instead!');
         }
 
-        $this->routes[] = $route;
         foreach ($methods as $method) {
-            $this->serializedRoutes[$method][] = &$route;
+            $this->routes[$method][] = $route;
         }
 
         return $route;
@@ -183,7 +180,7 @@ class Router
     private function getRoute(string $method, string $path): ?Route
     {
         /** @var Route $route */
-        foreach ($this->serializedRoutes[$method] as $route) {
+        foreach ($this->routes[$method] as $route) {
             if($route->match($path)) {
                 return $route;
             }
