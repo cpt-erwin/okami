@@ -2,8 +2,8 @@
 
 namespace Okami\Core\Middlewares;
 
+use Okami\Core\Interfaces\Executable;
 use Okami\Core\Response;
-use Okami\Core\Routing\Route;
 
 /**
  * Class Middleware
@@ -11,31 +11,34 @@ use Okami\Core\Routing\Route;
  * @author Michal Tuček <michaltk1@gmail.com>
  * @package Okami\Core\Middlewares
  */
-abstract class Middleware
+abstract class Middleware implements Executable
 {
-    private Route $route;
+    private array $callstack;
 
-    private Response $response;
-
-    public function __construct(Route $route)
+    public function __construct(array &$callstack)
     {
-        $this->route = $route;
-        $this->response = new Response();
+        $this->callstack = $callstack;
     }
 
     public function execute(): Response
     {
         $this->before();
 
-        if($this->route->hasPendingMiddlewares()) {
-            $this->response = $this->route->callNextMiddleware();
-        } else {
-            $this->response = $this->route->handleCallback();
+        $next = array_shift($this->callstack);
+
+        if(is_null($next)) {
+            throw new \LogicException('Array $callstack must contain an executable as its last element!');
         }
+
+        if(is_string($next)) {
+            $next = new $next($this->callstack);
+        }
+
+        $response = $next->execute();
 
         $this->after();
 
-        return $this->response;
+        return $response;
     }
 
     abstract public function before();

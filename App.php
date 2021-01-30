@@ -3,7 +3,9 @@
 namespace Okami\Core;
 
 use Exception;
+use LogicException;
 use Okami\Core\DB\Database;
+use Okami\Core\Interfaces\Executable;
 use Okami\Core\Routing\Router;
 
 /**
@@ -34,6 +36,8 @@ class App
     public ?UserModel $user = null;
     public static App $app;
     public ?Controller $controller = null;
+    private array $middlewares = [];
+    private array $callstack = [];
 
     public function __construct(string $rootPath, array $config)
     {
@@ -68,7 +72,7 @@ class App
      */
     public function run()
     {
-        $this->triggerEvent(self::EVENT_BEFORE_REQUEST);
+        // FIXME: Call App Middleware
         try {
             $response = $this->router->resolve();
             echo $response->body;
@@ -82,7 +86,6 @@ class App
                 ]);
             }
         }
-        $this->triggerEvent(self::EVENT_AFTER_REQUEST);
     }
 
     /**
@@ -121,16 +124,44 @@ class App
         return !self::$app->user;
     }
 
-    public function onEvent(string $eventName, callable $callback)
+    public function addMiddlewares(array $middlewares)
     {
-        $this->eventListeners[$eventName][] = $callback;
+        array_push($this->middlewares, $middlewares);
     }
 
-    private function triggerEvent(string $eventName)
+    public function hasMiddlewares(): bool
     {
-        $callbacks = $this->eventListeners[$eventName] ?? [];
-        foreach ($callbacks as $callback) {
-            call_user_func($callback);
+        return !empty($this->middlewares);
+    }
+
+    /**
+     * @param Executable $executable
+     * @throws LogicException
+     */
+    public function setCallstack(Executable $executable)
+    {
+        if (empty($this->middlewares)) {
+            throw new LogicException('Apps Middlewares cannot be empty while using callstack!');
         }
+
+        array_push($this->callstack, $this->middlewares, $executable);
+    }
+
+    /**
+     * @throws LogicException
+     */
+    public function executeCallstack(): Response
+    {
+        if (empty($this->callstack) || is_null($next = array_shift($callstack))) {
+            throw new LogicException('Trying to execute an empty callstack!');
+        }
+
+        if (is_string($next)) $next = new $next($callstack);
+
+        if (!$next instanceof Executable) {
+            throw new LogicException('Callstack contains an object which is not an instance of Executable!');
+        }
+
+        return $next->execute();
     }
 }
