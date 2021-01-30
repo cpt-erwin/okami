@@ -18,6 +18,7 @@ class Router
     public Request $request;
     public Response $response;
     public array $routes = [];
+    public array $serializedRoutes = [];
 
     /**
      * Router constructor.
@@ -39,7 +40,7 @@ class Router
      */
     public function get(string $path, $callback): Route
     {
-        return $this->addRoute('get', $path, $callback);
+        return $this->map([Request::GET], $path, $callback);
     }
 
     /**
@@ -50,7 +51,7 @@ class Router
      */
     public function post(string $path, $callback): Route
     {
-        return $this->addRoute('post', $path, $callback);
+        return $this->map([Request::POST], $path, $callback);
     }
 
     /**
@@ -61,7 +62,7 @@ class Router
      */
     public function put(string $path, $callback): Route
     {
-        return $this->addRoute('put', $path, $callback);
+        return $this->map([Request::PUT], $path, $callback);
     }
 
     /**
@@ -72,7 +73,7 @@ class Router
      */
     public function delete(string $path, $callback): Route
     {
-        return $this->addRoute('delete', $path, $callback);
+        return $this->map([Request::DELETE], $path, $callback);
     }
 
     /**
@@ -83,7 +84,7 @@ class Router
      */
     public function options(string $path, $callback): Route
     {
-        return $this->addRoute('options', $path, $callback);
+        return $this->map([Request::OPTIONS], $path, $callback);
     }
 
     /**
@@ -94,7 +95,7 @@ class Router
      */
     public function patch(string $path, $callback): Route
     {
-        return $this->addRoute('patch', $path, $callback);
+        return $this->map([Request::PATCH], $path, $callback);
     }
 
     /**
@@ -103,45 +104,52 @@ class Router
      */
     public function any(string $path, $callback)
     {
-        // TODO: Implement me!
+        return $this->map([
+            Request::GET,
+            Request::POST,
+            Request::PUT,
+            Request::DELETE,
+            Request::OPTIONS,
+            Request::PATCH
+        ], $path, $callback);
     }
 
     /**
      * @param array $methods
      * @param string $path
      * @param string|callable|array $callback
-     */
-    public function map(array $methods, string $path, $callback)
-    {
-        // TODO: Implement me!
-    }
-
-    /**
-     * @param string $method
-     * @param string $path
-     * @param string|callable|array $callback
      *
      * @return Route
      */
-    private function addRoute(string $method, string $path, $callback): Route
+    public function map(array $methods, string $path, $callback): Route
     {
+        $route = null;
+
         /** RENDER TEMPLATE **/
         if (is_string($callback)) {
-            return $this->routes[$method][] = new TemplateRoute($path, $callback);
+            $route = new TemplateRoute($path, $callback);
         }
 
         /** CALL CONTROLLER **/
         if (is_array($callback)) {
-            return $this->routes[$method][] = new ControllerRoute($path, $callback);
+            $route = new ControllerRoute($path, $callback);
         }
 
         /** EXECUTE FUNCTION **/
         if (is_callable($callback)) {
-            return $this->routes[$method][] = new FunctionRoute($path, $callback);
+            $route = new FunctionRoute($path, $callback);
         }
 
-        // Shouldn't ever reach this statement but just to be sure...
-        throw new LogicException('Requires callback of type string|callable|array but callback with type ' . gettype($callback) . ' passed instead!');
+        if(is_null($route)) {
+            throw new LogicException('Requires callback of type string|callable|array but callback with type ' . gettype($callback) . ' passed instead!');
+        }
+
+        $this->routes[] = $route;
+        foreach ($methods as $method) {
+            $this->serializedRoutes[$method][] = &$route;
+        }
+
+        return $route;
     }
 
     /**
@@ -164,7 +172,7 @@ class Router
     private function getRoute(string $method, string $path): ?Route
     {
         /** @var Route $route */
-        foreach ($this->routes[$method] as $route) {
+        foreach ($this->serializedRoutes[$method] as $route) {
             if($route->match($path)) {
                 return $route;
             }
