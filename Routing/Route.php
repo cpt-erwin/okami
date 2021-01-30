@@ -3,6 +3,7 @@
 namespace Okami\Core\Routing;
 
 use LogicException;
+use Okami\Core\Interfaces\Executable;
 use Okami\Core\Middlewares\Middleware;
 use Okami\Core\Response;
 
@@ -12,7 +13,7 @@ use Okami\Core\Response;
  * @author Michal Tuček <michaltk1@gmail.com>
  * @package Okami\Core\Routing
  */
-abstract class Route
+abstract class Route implements Executable
 {
     /** @var Middleware[] */
     public array $middlewares = [];
@@ -109,15 +110,7 @@ abstract class Route
         return $paths;
     }
 
-    abstract public function handleCallback(): Response;
-
-    public function execute(): Response
-    {
-        if($this->hasPendingMiddlewares()) {
-            return $this->callNextMiddleware();
-        }
-        return $this->handleCallback();
-    }
+    abstract public  function execute(): Response;
 
     public function match(string $pathToMatch): bool
     {
@@ -132,6 +125,11 @@ abstract class Route
             }
         }
         return false;
+    }
+
+    public function hasMiddlewares(): bool
+    {
+        return !empty($this->middlewares);
     }
 
     /**
@@ -167,21 +165,5 @@ abstract class Route
             $this->withMiddleware($middlewareClass);
         }
         return $this;
-    }
-
-    public function hasPendingMiddlewares(): bool
-    {
-        return !empty($this->middlewares);
-    }
-
-    public function callNextMiddleware(): Response
-    {
-        $middleware = array_shift($this->middlewares);
-        if(!is_null($middleware)) {
-            /** @var Middleware $middleware */
-            $middleware = new $middleware($this);
-            return $middleware->execute();
-        }
-        throw new LogicException('Trying to call the next middleware but there\'s no other middleware!');
     }
 }

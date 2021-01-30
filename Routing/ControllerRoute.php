@@ -13,12 +13,13 @@ use Okami\Core\Response;
  */
 class ControllerRoute extends Route
 {
-    public function handleCallback(): Response
+    public function execute(): Response
     {
         $callback = $this->getCallback();
         App::$app->setController(new $callback[0]()); // create instance of passed controller
         App::$app->controller->action = $callback[1];
         $callback[0] = App::$app->getController();
+        // FIXME: Don't create new response but use Apps response instead!
         $response = new Response();
         $response->body = call_user_func($callback, App::$app->request, App::$app->response, $this->getParams());
         return $response;

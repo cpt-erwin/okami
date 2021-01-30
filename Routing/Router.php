@@ -3,7 +3,9 @@
 namespace Okami\Core\Routing;
 
 use LogicException;
+use Okami\Core\App;
 use Okami\Core\Exceptions\NotFoundException;
+use Okami\Core\Middlewares\Middleware;
 use Okami\Core\Request;
 use Okami\Core\Response;
 
@@ -166,7 +168,16 @@ class Router
             throw new NotFoundException();
         }
 
-        return $route->execute();
+        if($route->hasMiddlewares()) {
+            App::$app->addMiddlewares($route->middlewares);
+        }
+
+        if (App::$app->hasMiddlewares()) {
+            App::$app->setCallstack($route);
+            return App::$app->executeCallstack();
+        } else {
+            return $route->execute();
+        }
     }
 
     private function getRoute(string $method, string $path): ?Route

@@ -13,8 +13,9 @@ use Okami\Core\Response;
  */
 class TemplateRoute extends Route
 {
-    public function handleCallback(): Response
+    public function execute(): Response
     {
+        // FIXME: Don't create new response but use Apps response instead!
         $response = new Response();
         $response->body = App::$app->view->renderView($this->getCallback());
         return $response;
