@@ -132,7 +132,8 @@ class App
             throw new LogicException('Apps Middlewares cannot be empty while using callstack!');
         }
 
-        array_push($this->callstack, $this->middlewares, $executable);
+        $this->callstack = array_merge($this->callstack, $this->middlewares);
+        array_push($this->callstack, $executable);
     }
 
     /**
