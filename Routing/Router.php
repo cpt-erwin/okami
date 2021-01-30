@@ -153,9 +153,6 @@ class Router
      */
     public function resolve(): Response
     {
-        echo '<pre>' . var_export($this->routes, true) . '</pre>';
-        exit();
-
         $path = $this->request->getPath();
         $method = $this->request->method();
 
