@@ -149,4 +149,16 @@ abstract class Route implements ExecutableInterface
         }
         return $this->patterns[$pattern];
     }
+
+    public function withMiddleware(string $middleware): Route
+    {
+        $this->addMiddleware($middleware);
+        return $this;
+    }
+
+    public function withMiddlewares(array $middlewares): Route
+    {
+        $this->addMiddlewares($middlewares);
+        return $this;
+    }
 }
