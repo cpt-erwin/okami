@@ -54,6 +54,69 @@ class Router
     }
 
     /**
+     * @param string $path
+     * @param string|callable|array $callback
+     *
+     * @return Route
+     */
+    public function put(string $path, $callback): Route
+    {
+        return $this->addRoute('put', $path, $callback);
+    }
+
+    /**
+     * @param string $path
+     * @param string|callable|array $callback
+     *
+     * @return Route
+     */
+    public function delete(string $path, $callback): Route
+    {
+        return $this->addRoute('delete', $path, $callback);
+    }
+
+    /**
+     * @param string $path
+     * @param string|callable|array $callback
+     *
+     * @return Route
+     */
+    public function options(string $path, $callback): Route
+    {
+        return $this->addRoute('options', $path, $callback);
+    }
+
+    /**
+     * @param string $path
+     * @param string|callable|array $callback
+     *
+     * @return Route
+     */
+    public function patch(string $path, $callback): Route
+    {
+        return $this->addRoute('patch', $path, $callback);
+    }
+
+    /**
+     * @param string $path
+     * @param string|callable|array $callback
+     */
+    public function any(string $path, $callback)
+    {
+        // TODO: Implement me!
+    }
+
+    /**
+     * @param array $methods
+     * @param string $path
+     * @param string|callable|array $callback
+     */
+    public function map(array $methods, string $path, $callback)
+    {
+        // TODO: Implement me!
+    }
+
+    /**
      * @param string $method
      * @param string $path
      * @param string|callable|array $callback
