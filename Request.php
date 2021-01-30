@@ -10,6 +10,13 @@ namespace Okami\Core;
  */
 class Request
 {
+    const GET = 'get';
+    const POST = 'post';
+    const PUT = 'put';
+    const DELETE = 'delete';
+    const OPTIONS = 'options';
+    const PATCH = 'patch';
+
     public function getPath(): string
     {
         /** @var string $path */
