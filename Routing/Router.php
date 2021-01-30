@@ -125,18 +125,14 @@ class Router
     {
         $route = null;
 
-        /** RENDER TEMPLATE **/
         if (is_string($callback)) {
+            /** RENDER TEMPLATE **/
             $route = new TemplateRoute($path, $callback);
-        }
-
-        /** CALL CONTROLLER **/
-        if (is_array($callback)) {
+        } elseif (is_array($callback)) {
+            /** CALL CONTROLLER **/
             $route = new ControllerRoute($path, $callback);
-        }
-
-        /** EXECUTE FUNCTION **/
-        if (is_callable($callback)) {
+        } elseif (is_callable($callback)) {
+            /** EXECUTE FUNCTION **/
             $route = new FunctionRoute($path, $callback);
         }
 
@@ -157,6 +153,9 @@ class Router
      */
     public function resolve(): Response
     {
+        echo '<pre>' . var_export($this->routes, true) . '</pre>';
+        exit();
+
         $path = $this->request->getPath();
         $method = $this->request->method();
 
