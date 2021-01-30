@@ -140,11 +140,11 @@ class App
      */
     public function executeCallstack(): Response
     {
-        if (empty($this->callstack) || is_null($next = array_shift($callstack))) {
+        if (empty($this->callstack) || is_null($next = array_shift($this->callstack))) {
             throw new LogicException('Trying to execute an empty callstack!');
         }
 
-        if (is_string($next)) $next = new $next($callstack);
+        if (is_string($next)) $next = new $next($this->callstack);
 
         if (!$next instanceof ExecutableInterface) {
             throw new LogicException('Callstack contains an object which is not an instance of Executable!');
