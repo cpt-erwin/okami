@@ -7,6 +7,7 @@ use LogicException;
 use Okami\Core\DB\Database;
 use Okami\Core\Interfaces\ExecutableInterface;
 use Okami\Core\Routing\Router;
+use Okami\Core\Traits\WithMiddlewaresTrait;
 
 /**
  * Class App
@@ -16,10 +17,7 @@ use Okami\Core\Routing\Router;
  */
 class App
 {
-    const EVENT_BEFORE_REQUEST = 'beforeRequest';
-    const EVENT_AFTER_REQUEST = 'afterRequest';
-
-    protected array $eventListeners = [];
+    use WithMiddlewaresTrait;
 
     public static string $ROOT_DIR;
 
@@ -36,7 +34,6 @@ class App
     public ?UserModel $user = null;
     public static App $app;
     public ?Controller $controller = null;
-    private array $middlewares = [];
     private array $callstack = [];
 
     public function __construct(string $rootPath, array $config)
@@ -122,16 +119,6 @@ class App
     public static function isGuest(): bool
     {
         return !self::$app->user;
-    }
-
-    public function addMiddlewares(array $middlewares)
-    {
-        array_push($this->middlewares, $middlewares);
-    }
-
-    public function hasMiddlewares(): bool
-    {
-        return !empty($this->middlewares);
     }
 
     /**

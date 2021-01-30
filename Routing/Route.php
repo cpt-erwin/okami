@@ -4,8 +4,8 @@ namespace Okami\Core\Routing;
 
 use LogicException;
 use Okami\Core\Interfaces\ExecutableInterface;
-use Okami\Core\Middlewares\Middleware;
 use Okami\Core\Response;
+use Okami\Core\Traits\WithMiddlewaresTrait;
 
 /**
  * Class Route
@@ -15,8 +15,10 @@ use Okami\Core\Response;
  */
 abstract class Route implements ExecutableInterface
 {
-    /** @var Middleware[] */
-    public array $middlewares = [];
+    use WithMiddlewaresTrait {
+        WithMiddlewaresTrait::addMiddleware as private;
+        WithMiddlewaresTrait::addMiddlewares as private;
+    }
 
     private array $paths;
 
@@ -127,11 +129,6 @@ abstract class Route implements ExecutableInterface
         return false;
     }
 
-    public function hasMiddlewares(): bool
-    {
-        return !empty($this->middlewares);
-    }
-
     /**
      * @return array|callable|string
      */
@@ -151,19 +148,5 @@ abstract class Route implements ExecutableInterface
             throw new LogicException('Unknown pattern \'' . $pattern . '\' used!');
         }
         return $this->patterns[$pattern];
-    }
-
-    public function addMiddleware(string $middlewareClass): Route
-    {
-        $this->middlewares[] = $middlewareClass;
-        return $this;
-    }
-
-    public function addMiddlewares(array $middlewareClasses): Route
-    {
-        foreach ($middlewareClasses as $middlewareClass) {
-            $this->addMiddleware($middlewareClass);
-        }
-        return $this;
     }
 }

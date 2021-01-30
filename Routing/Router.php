@@ -169,7 +169,7 @@ class Router
         }
 
         if($route->hasMiddlewares()) {
-            App::$app->addMiddlewares($route->middlewares);
+            App::$app->addMiddlewares($route->getMiddlewares());
         }
 
         if (App::$app->hasMiddlewares()) {
