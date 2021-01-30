@@ -2,7 +2,7 @@
 
 namespace Okami\Core\Middlewares;
 
-use Okami\Core\Interfaces\Executable;
+use Okami\Core\Interfaces\ExecutableInterface;
 use Okami\Core\Response;
 
 /**
@@ -11,7 +11,7 @@ use Okami\Core\Response;
  * @author Michal Tuček <michaltk1@gmail.com>
  * @package Okami\Core\Middlewares
  */
-abstract class Middleware implements Executable
+abstract class Middleware implements ExecutableInterface
 {
     private array $callstack;
 

@@ -5,7 +5,7 @@ namespace Okami\Core;
 use Exception;
 use LogicException;
 use Okami\Core\DB\Database;
-use Okami\Core\Interfaces\Executable;
+use Okami\Core\Interfaces\ExecutableInterface;
 use Okami\Core\Routing\Router;
 
 /**
@@ -135,10 +135,11 @@ class App
     }
 
     /**
-     * @param Executable $executable
+     * @param ExecutableInterface $executable
+     *
      * @throws LogicException
      */
-    public function setCallstack(Executable $executable)
+    public function setCallstack(ExecutableInterface $executable)
     {
         if (empty($this->middlewares)) {
             throw new LogicException('Apps Middlewares cannot be empty while using callstack!');
@@ -158,7 +159,7 @@ class App
 
         if (is_string($next)) $next = new $next($callstack);
 
-        if (!$next instanceof Executable) {
+        if (!$next instanceof ExecutableInterface) {
             throw new LogicException('Callstack contains an object which is not an instance of Executable!');
         }
 

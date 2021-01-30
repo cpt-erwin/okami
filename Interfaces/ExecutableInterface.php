@@ -4,7 +4,7 @@ namespace Okami\Core\Interfaces;
 
 use Okami\Core\Response;
 
-interface Executable
+interface ExecutableInterface
 {
     public function execute(): Response;
 }

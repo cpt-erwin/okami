@@ -3,7 +3,7 @@
 namespace Okami\Core\Routing;
 
 use LogicException;
-use Okami\Core\Interfaces\Executable;
+use Okami\Core\Interfaces\ExecutableInterface;
 use Okami\Core\Middlewares\Middleware;
 use Okami\Core\Response;
 
@@ -13,7 +13,7 @@ use Okami\Core\Response;
  * @author Michal Tuček <michaltk1@gmail.com>
  * @package Okami\Core\Routing
  */
-abstract class Route implements Executable
+abstract class Route implements ExecutableInterface
 {
     /** @var Middleware[] */
     public array $middlewares = [];
@@ -153,13 +153,13 @@ abstract class Route implements Executable
         return $this->patterns[$pattern];
     }
 
-    public function withMiddleware(string $middlewareClass): Route
+    public function addMiddleware(string $middlewareClass): Route
     {
         $this->middlewares[] = $middlewareClass;
         return $this;
     }
 
-    public function withMiddlewares(array $middlewareClasses): Route
+    public function addMiddlewares(array $middlewareClasses): Route
     {
         foreach ($middlewareClasses as $middlewareClass) {
             $this->withMiddleware($middlewareClass);
