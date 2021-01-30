@@ -162,7 +162,7 @@ abstract class Route implements ExecutableInterface
     public function addMiddlewares(array $middlewareClasses): Route
     {
         foreach ($middlewareClasses as $middlewareClass) {
-            $this->withMiddleware($middlewareClass);
+            $this->addMiddleware($middlewareClass);
         }
         return $this;
     }
