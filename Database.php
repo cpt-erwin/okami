@@ -1,9 +1,8 @@
 <?php
 
-namespace Okami\Core\DB;
+namespace Okami\Core;
 
 use LogicException;
-use Okami\Core\App;
 use PDO;
 use PDOException;
 

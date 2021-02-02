@@ -4,7 +4,6 @@ namespace Okami\Core;
 
 use Exception;
 use LogicException;
-use Okami\Core\DB\Database;
 use Okami\Core\Interfaces\ExecutableInterface;
 use Okami\Core\Routing\Router;
 use Okami\Core\Traits\WithMiddlewaresTrait;
