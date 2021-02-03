@@ -28,6 +28,7 @@ class Router extends Routable
     {
         $this->request = $request;
         $this->response = $response;
+        parent::__construct();
     }
 
     /**

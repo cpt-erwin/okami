@@ -13,19 +13,23 @@ use Okami\Core\Request;
  */
 abstract class Routable
 {
+    /**
+     * @var string|null
+     */
     protected ?string $pathRoot = null;
 
     /**
-     * FIXME: Create RouteCollection instead of routes array
-     *
-     * @var array<string, Route[]>
+     * @var RouteCollection
      */
-    public array $routes = [];
+    public RouteCollection $routeCollection;
 
     /**
-     * @var RouteGroup[]
+     * Routable constructor.
      */
-    public array $routeGroups = [];
+    public function __construct()
+    {
+        $this->routeCollection = new RouteCollection();
+    }
 
     /**
      * @param string $path
@@ -35,8 +39,8 @@ abstract class Routable
      */
     public function group(string $path, callable $callable): RouteGroup
     {
-        $routeGroup = new RouteGroup($path, $callable);
-        $this->routeGroups[] = $routeGroup;
+        $routeGroup = new RouteGroup($this->getPath($path), $callable);
+        $this->routeCollection->addRouteGroup($routeGroup);
 
         return $routeGroup;
     }
@@ -154,45 +158,20 @@ abstract class Routable
         }
 
         foreach ($methods as $method) {
-            $this->routes[$method][] = $route;
+            $this->routeCollection->addRoute($route, $method);
         }
 
         return $route;
     }
 
     /**
-     * @return bool
-     */
-    public function hasRouteGroups(): bool
-    {
-        return !empty($this->routeGroups);
-    }
-
-    /**
-     * @return Route[]
-     */
-    public function getRoutesFromGroups(): array
-    {
-        $routes = [];
-        foreach ($this->routeGroups as $routeGroup) {
-            $routes = array_merge_recursive($routes, $routeGroup->getRoutes());
-        }
-
-        return $routes;
-    }
-
-    /**
      * @param string $method
      *
-     * @return array<string, Route[]>
+     * @return Route[]
      */
     public function getRoutes(string $method): array
     {
-        if ($this->hasRouteGroups()) {
-            return array_merge_recursive($this->routes, $this->getRoutesFromGroups())[$method];
-        }
-
-        return $this->routes[$method];
+        return $this->routeCollection->getRoutesForMethod($method);
     }
 
     /**

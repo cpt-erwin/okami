@@ -14,10 +14,10 @@ class RouteGroup extends Routable
      * RouteGroup constructor.
      *
      * @param string $path
-     * @param callable $callable
      */
-    public function __construct(string $path, callable $callable)
+    public function __construct(string $path)
     {
         $this->pathRoot = $path;
+        parent::__construct();
     }
 }
