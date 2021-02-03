@@ -2,7 +2,6 @@
 
 namespace Okami\Core\Traits;
 
-
 /**
  * Class WithMiddlewaresTrait
  *
@@ -10,18 +9,22 @@ namespace Okami\Core\Traits;
  */
 trait WithMiddlewaresTrait
 {
+    /**
+     * @var string[]
+     */
     private array $middlewares = [];
 
+    /**
+     * @return bool
+     */
     public function hasMiddlewares(): bool
     {
         return !empty($this->middlewares);
     }
 
-    public function addMiddleware(string $middlewareClass)
-    {
-        $this->middlewares[] = $middlewareClass;
-    }
-
+    /**
+     * @param string[] $middlewareClasses
+     */
     public function addMiddlewares(array $middlewareClasses)
     {
         foreach ($middlewareClasses as $middlewareClass) {
@@ -29,6 +32,17 @@ trait WithMiddlewaresTrait
         }
     }
 
+    /**
+     * @param string $middlewareClass
+     */
+    public function addMiddleware(string $middlewareClass)
+    {
+        $this->middlewares[] = $middlewareClass;
+    }
+
+    /**
+     * @return string[]
+     */
     public function getMiddlewares(): array
     {
         return $this->middlewares;

@@ -13,24 +13,36 @@ use Okami\Core\Response;
  */
 abstract class Middleware implements ExecutableInterface
 {
+    /**
+     * @var string[]|ExecutableInterface[]
+     */
     private array $callstack;
 
+    /**
+     * Middleware constructor.
+     *
+     * @param array $callstack
+     */
     public function __construct(array &$callstack)
     {
         $this->callstack = $callstack;
     }
 
+    /**
+     * @return Response
+     */
     public function execute(): Response
     {
         $this->before();
 
+        /** @var string|ExecutableInterface|null $next */
         $next = array_shift($this->callstack);
 
-        if(is_null($next)) {
+        if (is_null($next)) {
             throw new \LogicException('Array $callstack must contain an executable as its last element!');
         }
 
-        if(is_string($next)) {
+        if (is_string($next)) {
             $next = new $next($this->callstack);
         }
 
@@ -41,6 +53,7 @@ abstract class Middleware implements ExecutableInterface
         return $response;
     }
 
-    abstract public function before();
-    abstract public function after();
+    abstract public function before(): void;
+
+    abstract public function after(): void;
 }

@@ -20,13 +20,22 @@ abstract class Route implements ExecutableInterface
         WithMiddlewaresTrait::addMiddlewares as private;
     }
 
+    /**
+     * @var string[]
+     */
     private array $paths;
 
     /** @var array|callable|string $callback */
     private $callback;
 
+    /**
+     * @var array
+     */
     private array $params = [];
 
+    /**
+     * @var array<string, string>
+     */
     private array $patterns = [
         'any' => '.*', // Any
         'num' => '[0-9]+', // Numbers
@@ -48,6 +57,12 @@ abstract class Route implements ExecutableInterface
         $this->callback = $callback;
     }
 
+    /**
+     * @param string $path
+     * @param string $root
+     *
+     * @return string[]
+     */
     private function analyzePath(string $path, string $root = ''): array
     {
         // paths example
@@ -62,7 +77,7 @@ abstract class Route implements ExecutableInterface
         // '/stock/{stockID:id}[/supplier/{supplierID:id}[/product/{productID:id}]]'
 
         $matches = preg_split('/(\[.*?\]$)|(\{.*?\})/', $path, -1, PREG_SPLIT_DELIM_CAPTURE | PREG_SPLIT_NO_EMPTY);
-        if($matches === false) {
+        if ($matches === false) {
             throw new LogicException("Unexpected exception occurred while testing the path against the REGEX.");
         }
 
@@ -81,7 +96,6 @@ abstract class Route implements ExecutableInterface
             // 2) '/gallery/{galleryID:id}'
             // for the second case we still want imageID to be set with value null
 
-
             foreach ($matches as $match) {
                 // If $match starts with { and ends with } then remove those signs
                 // and split string by : where first element of the returned array
@@ -90,7 +104,7 @@ abstract class Route implements ExecutableInterface
                 // If the array has only one element the :any pattern will be selected.
                 if (preg_match('/^\{.*?\}$/', $match)) {
                     $param = explode(':', str_replace(['{', '}'], '', $match));
-                    if(sizeof($param) === 1) {
+                    if (sizeof($param) === 1) {
                         $param[1] = 'any';
                     }
                     $this->params[] = $param[0];
@@ -109,24 +123,76 @@ abstract class Route implements ExecutableInterface
                 $paths[] = $match;
             }
         }
+
         return $paths;
     }
 
+    /**
+     * @param string $pattern
+     *
+     * @return string
+     */
+    private function getPattern(string $pattern): string
+    {
+        if (!array_key_exists($pattern, $this->patterns)) {
+            throw new LogicException('Unknown pattern \'' . $pattern . '\' used!');
+        }
+
+        return $this->patterns[$pattern];
+    }
+
+    /**
+     * @return Response
+     */
     abstract public function execute(): Response;
 
+    /**
+     * @param string $pathToMatch
+     *
+     * @return bool
+     */
     public function match(string $pathToMatch): bool
     {
-        foreach($this->paths as $path) {
+        foreach ($this->paths as $path) {
             $pattern = '/^' . str_replace('/', '\/', $path) . '$/';
-            if(preg_match($pattern, $pathToMatch)) {
+            if (preg_match($pattern, $pathToMatch)) {
                 // FIXME: Make a constant for replacement delimiter @&#&@
                 $arguments = explode('@&#&@', preg_replace($pattern, '$1@&#&@$2@&#&@$3@&#&@$4', $pathToMatch));
-                $this->params = array_combine($this->params, array_slice($arguments, 0, sizeof($this->params))); // initialize params
-                array_walk($this->params, function(&$value) { $value = $value ?: null; }); // set empty params to null value
+                $this->params = array_combine($this->params,
+                    array_slice($arguments, 0, sizeof($this->params))); // initialize params
+                array_walk($this->params, function (&$value) {
+                    $value = $value ?: null;
+                }); // set empty params to null value
+
                 return true;
             }
         }
+
         return false;
+    }
+
+    /**
+     * @param string $middleware
+     *
+     * @return $this
+     */
+    public function withMiddleware(string $middleware): Route
+    {
+        $this->addMiddleware($middleware);
+
+        return $this;
+    }
+
+    /**
+     * @param array $middlewares
+     *
+     * @return $this
+     */
+    public function withMiddlewares(array $middlewares): Route
+    {
+        $this->addMiddlewares($middlewares);
+
+        return $this;
     }
 
     /**
@@ -137,28 +203,11 @@ abstract class Route implements ExecutableInterface
         return $this->callback;
     }
 
+    /**
+     * @return array
+     */
     protected function getParams(): array
     {
         return $this->params;
-    }
-
-    private function getPattern(string $pattern): string
-    {
-        if(!array_key_exists($pattern, $this->patterns)) {
-            throw new LogicException('Unknown pattern \'' . $pattern . '\' used!');
-        }
-        return $this->patterns[$pattern];
-    }
-
-    public function withMiddleware(string $middleware): Route
-    {
-        $this->addMiddleware($middleware);
-        return $this;
-    }
-
-    public function withMiddlewares(array $middlewares): Route
-    {
-        $this->addMiddlewares($middlewares);
-        return $this;
     }
 }

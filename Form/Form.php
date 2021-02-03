@@ -15,6 +15,7 @@ class Form
     public static function begin(string $action, string $method)
     {
         echo sprintf('<form action="%s" method="%s">', $action, $method);
+
         return new Form();
     }
 

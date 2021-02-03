@@ -15,7 +15,14 @@ use Okami\Core\Response;
  */
 class Router extends Routable
 {
+    /**
+     * @var Request
+     */
     public Request $request;
+
+    /**
+     * @var Response
+     */
     public Response $response;
 
     /**
@@ -45,12 +52,13 @@ class Router extends Routable
             throw new NotFoundException();
         }
 
-        if($route->hasMiddlewares()) {
+        if ($route->hasMiddlewares()) {
             App::$app->addMiddlewares($route->getMiddlewares());
         }
 
         if (App::$app->hasMiddlewares()) {
             App::$app->setCallstack($route);
+
             return App::$app->executeCallstack();
         } else {
             return $route->execute();
@@ -66,10 +74,11 @@ class Router extends Routable
     private function getRoute(string $method, string $path): ?Route
     {
         foreach ($this->getRoutes($method) as $route) {
-            if($route->match($path)) {
+            if ($route->match($path)) {
                 return $route;
             }
         }
+
         return null;
     }
 }

@@ -47,11 +47,23 @@ class RouteCollection
     }
 
     /**
+     * @param string $method
+     *
+     * @return Route[]
+     */
+    public function getRoutesForMethod(string $method): array
+    {
+        return $this->getRoutes()[$method];
+    }
+
+    /**
      * @return Route[]
      */
     private function getRoutesFromGroups(): array
     {
-        if (empty($this->routeGroups)) return [];
+        if (empty($this->routeGroups)) {
+            return [];
+        }
 
         $routes = [];
         foreach ($this->routeGroups as $routeGroup) {
@@ -67,15 +79,5 @@ class RouteCollection
     public function getRoutes(): array
     {
         return array_merge_recursive($this->routes, $this->getRoutesFromGroups());
-    }
-
-    /**
-     * @param string $method
-     *
-     * @return Route[]
-     */
-    public function getRoutesForMethod(string $method): array
-    {
-        return $this->getRoutes()[$method];
     }
 }

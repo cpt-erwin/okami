@@ -18,6 +18,7 @@ class Database extends PDO
      * Database constructor.
      *
      * @param array $config
+     *
      * @throws PDOException
      */
     public function __construct(array $config)
@@ -31,7 +32,7 @@ class Database extends PDO
         $this->createMigrationTable();
         $appliedMigrations = $this->getAppliedMigrations();
         $migrationsDir = App::$ROOT_DIR . '/migrations';
-        if(!is_dir($migrationsDir)) {
+        if (!is_dir($migrationsDir)) {
             throw new LogicException('Trying to scan nonexistent directory \'' . $migrationsDir . '\'!');
         }
 
@@ -70,6 +71,9 @@ class Database extends PDO
         ) ENGINE=INNODB;");
     }
 
+    /**
+     * @return array
+     */
     public function getAppliedMigrations(): array
     {
         $statement = $this->prepare("SELECT migration FROM migrations;");
@@ -78,14 +82,21 @@ class Database extends PDO
         return $statement->fetchAll(PDO::FETCH_COLUMN); // Return migration column values as a single dimension array
     }
 
+    /**
+     * @param string $message
+     */
+    protected function log(string $message)
+    {
+        echo '[' . date('Y-m-d H:i:s') . '] - ' . $message . PHP_EOL;
+    }
+
+    /**
+     * @param array $migrations
+     */
     public function saveMigrations(array $migrations)
     {
         $values = implode(",", array_map(fn($migration) => "('$migration')", $migrations));
         $statement = $this->prepare("INSERT INTO migrations (migration) VALUES $values;");
         $statement->execute();
-    }
-
-    protected function log(string $message) {
-        echo '[' . date('Y-m-d H:i:s') . '] - ' . $message . PHP_EOL;
     }
 }

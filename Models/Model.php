@@ -19,45 +19,25 @@ abstract class Model
     const SORT_ASC = 'ASC';
     const SORT_DESC = 'DESC';
 
+    /**
+     * @var string|null
+     */
     private static ?string $tableName = null;
 
+    /**
+     * @var string
+     */
     private static string $primaryKey = 'id';
 
+    /**
+     * @var string|null
+     */
     private static ?string $defaultSortColumn = null;
 
+    /**
+     * @var string
+     */
     private static string $defaultSortMode = self::SORT_ASC;
-
-    /**
-     * @return string
-     */
-    protected static function getTableName(): string
-    {
-        // FIXME: Pass static::class to some method that will return the plural of that word
-        return is_null(static::$tableName) ? static::class : static::$tableName;
-    }
-
-    /**
-     * @return string
-     */
-    protected static function getPrimaryKey(): string
-    {
-        return self::$primaryKey;
-    }
-
-    /**
-     * Specifies which table columns can be manipulated with
-     *
-     * @return array
-     */
-    abstract protected function fillables(): array;
-
-    /**
-     * @return string
-     */
-    protected static function getDefaultSortColumn(): string
-    {
-        return is_null(static::$defaultSortColumn) ? static::getPrimaryKey() : static::$defaultSortColumn;
-    }
 
     /**
      * @param mixed $value
@@ -79,6 +59,15 @@ abstract class Model
         } catch (PDOException $e) {
             throw new Exception("An error has occurred while reading DB table " . static::getTableName() . ": {$e->getMessage()}");
         }
+    }
+
+    /**
+     * @return string
+     */
+    protected static function getTableName(): string
+    {
+        // FIXME: Pass static::class to some method that will return the plural of that word
+        return is_null(static::$tableName) ? static::class : static::$tableName;
     }
 
     /**
@@ -109,6 +98,73 @@ abstract class Model
     }
 
     /**
+     * @param string $SQL
+     *
+     * @return PDOStatement
+     * @throws PDOException
+     */
+    private static function prepare(string $SQL): PDOStatement
+    {
+        return App::$app->db->prepare($SQL);
+    }
+
+    /**
+     * @return bool
+     */
+    public function save(): bool
+    {
+        $tableName = static::getTableName();
+        $fillables = $this->fillables();
+        $params = array_map(fn($attribute) => ":$attribute", $fillables);
+        $statement = self::prepare("INSERT INTO $tableName (" . implode(',', $fillables) . ") 
+            VALUES (" . implode(',', $params) . ");");
+
+        foreach ($fillables as $attribute) {
+            $statement->bindValue(":$attribute", $this->{$attribute});
+        }
+
+        return $statement->execute();
+    }
+
+    /**
+     * Specifies which table columns can be manipulated with
+     *
+     * @return array
+     */
+    abstract protected function fillables(): array;
+
+    /**
+     * @param string $modelClassName
+     * @param string $foreignKey
+     * @param $value
+     *
+     * @return static[]
+     * @throws Exception
+     */
+    protected function hasMany(string $modelClassName, string $foreignKey, $value): array
+    {
+        $model = $this->getModelFromClassName($modelClassName);
+
+        return $model::getAll("`{$foreignKey}` = '{$value}'");
+    }
+
+    /**
+     * @param string $modelClassName
+     *
+     * @return static
+     * @throws Exception
+     */
+    private function getModelFromClassName(string $modelClassName): Model
+    {
+        $model = new $modelClassName();
+        if (!$model instanceof Model) {
+            throw new Exception("Class {$modelClassName} must be a child of class Model!");
+        }
+
+        return $model;
+    }
+
+    /**
      * @param string|null $where
      *
      * @return static[]
@@ -129,34 +185,19 @@ abstract class Model
     }
 
     /**
-     * @param string $modelClassName
-     *
-     * @return static
-     * @throws Exception
+     * @return string
      */
-    private function getModelFromClassName(string $modelClassName): Model
+    protected static function getDefaultSortColumn(): string
     {
-        $model = new $modelClassName();
-        if (!$model instanceof Model) {
-            throw new Exception("Class {$modelClassName} must be a child of class Model!");
-        }
-
-        return $model;
+        return is_null(static::$defaultSortColumn) ? static::getPrimaryKey() : static::$defaultSortColumn;
     }
 
     /**
-     * @param string $modelClassName
-     * @param string $foreignKey
-     * @param $value
-     *
-     * @return static[]
-     * @throws Exception
+     * @return string
      */
-    protected function hasMany(string $modelClassName, string $foreignKey, $value): array
+    protected static function getPrimaryKey(): string
     {
-        $model = $this->getModelFromClassName($modelClassName);
-
-        return $model::getAll("`{$foreignKey}` = '{$value}'");
+        return self::$primaryKey;
     }
 
     /**
@@ -196,34 +237,5 @@ abstract class Model
         } catch (PDOException $e) {
             throw new Exception("An error has occurred while reading DB table " . static::getTableName() . ": {$e->getMessage()}");
         }
-    }
-
-    /**
-     * @return bool
-     */
-    public function save(): bool
-    {
-        $tableName = static::getTableName();
-        $fillables = $this->fillables();
-        $params = array_map(fn($attribute) => ":$attribute", $fillables);
-        $statement = self::prepare("INSERT INTO $tableName (" . implode(',', $fillables) . ") 
-            VALUES (" . implode(',', $params) . ");");
-
-        foreach ($fillables as $attribute) {
-            $statement->bindValue(":$attribute", $this->{$attribute});
-        }
-
-        return $statement->execute();
-    }
-
-    /**
-     * @param string $SQL
-     *
-     * @return PDOStatement
-     * @throws PDOException
-     */
-    private static function prepare(string $SQL): PDOStatement
-    {
-        return App::$app->db->prepare($SQL);
     }
 }

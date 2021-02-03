@@ -18,30 +18,72 @@ class App
 {
     use WithMiddlewaresTrait;
 
+    /**
+     * @var string
+     */
     public static string $ROOT_DIR;
 
+    /**
+     * @var App
+     */
     public static App $app;
 
+    /**
+     * @var Request
+     */
     public Request $request;
 
+    /**
+     * @var Response
+     */
     public Response $response;
 
+    /**
+     * @var Router
+     */
     public Router $router;
 
+    /**
+     * @var Database
+     */
     public Database $db;
 
+    /**
+     * @var Session
+     */
     public Session $session;
 
+    /**
+     * @var View
+     */
     public View $view;
 
-    private bool $debug;
-
-    private array $callstack = [];
-
+    /**
+     * @var string
+     */
     public string $layout = 'main';
 
+    /**
+     * @var Controller|null
+     */
     public ?Controller $controller = null;
 
+    /**
+     * @var bool
+     */
+    private bool $debug;
+
+    /**
+     * @var array
+     */
+    private array $callstack = [];
+
+    /**
+     * App constructor.
+     *
+     * @param string $rootPath
+     * @param array $config
+     */
     public function __construct(string $rootPath, array $config)
     {
         self::$ROOT_DIR = $rootPath;
@@ -53,7 +95,7 @@ class App
         $this->session = new Session();
         $this->view = new View();
 
-        $this->debug = $config['debug'] ?: false;
+        $this->debug = isset($config['debug']) && is_bool($config['debug']) ? $config['debug'] : false;
         if ($this->debug) {
             $whoops = new \Whoops\Run;
             $whoops->pushHandler(new \Whoops\Handler\PrettyPageHandler);

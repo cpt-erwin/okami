@@ -17,6 +17,9 @@ class Request
     const OPTIONS = 'options';
     const PATCH = 'patch';
 
+    /**
+     * @return string
+     */
     public function getPath(): string
     {
         /** @var string $path */
@@ -25,24 +28,37 @@ class Request
         if ($position === false) {
             return $path;
         }
+
         return substr($path, 0, $position);
     }
 
-    public function method(): string
-    {
-        return strtolower($_SERVER['REQUEST_METHOD']);
-    }
-
+    /**
+     * @return bool
+     */
     public function isGet(): bool
     {
         return $this->method() === 'get';
     }
 
+    /**
+     * @return string
+     */
+    public function method(): string
+    {
+        return strtolower($_SERVER['REQUEST_METHOD']);
+    }
+
+    /**
+     * @return bool
+     */
     public function isPost(): bool
     {
         return $this->method() === 'post';
     }
 
+    /**
+     * @return array
+     */
     public function getBody(): array
     {
         $body = [];

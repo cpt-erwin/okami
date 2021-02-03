@@ -13,6 +13,9 @@ use Okami\Core\Response;
  */
 class ControllerRoute extends Route
 {
+    /**
+     * @return Response
+     */
     public function execute(): Response
     {
         $callback = $this->getCallback();
@@ -22,6 +25,7 @@ class ControllerRoute extends Route
         // FIXME: Don't create new response but use Apps response instead!
         $response = new Response();
         $response->body = call_user_func($callback, App::$app->request, App::$app->response, $this->getParams());
+
         return $response;
     }
 }

@@ -1,38 +1,38 @@
 {
-    "name": "tumi-soft/okami",
-    "type": "library",
-    "description": "A simple PHP MVC made from scratch for learning purposes using PHP 7.4",
-    "keywords": [
-        "php",
-        "mvc",
-        "oop",
-        "router"
-    ],
-    "homepage": "https://github.com/tumi-soft/okami",
-    "license": "apache-2.0",
-    "authors": [
-        {
-            "name": "Michal Tuček",
-            "email": "michaltk1@gmail.com"
-        }
-    ],
-    "require": {
-        "php" : ">=7.4",
-        "ext-pdo": "*",
-        "vlucas/phpdotenv": "^5.2",
-        "filp/whoops": "^2.9"
-    },
-    "require-dev": {},
-    "config": {
-        "process-timeout": 0
-    },
-    "autoload": {
-        "psr-4": {
-            "Okami\\Core\\": "./"
-        }
-    },
-    "autoload-dev": {},
-    "scripts": {
-        "start": "php -S localhost:8080 -t public"
+  "name": "tumi-soft/okami",
+  "type": "library",
+  "description": "A simple PHP MVC made from scratch for learning purposes using PHP 7.4",
+  "keywords": [
+    "php",
+    "mvc",
+    "oop",
+    "router"
+  ],
+  "homepage": "https://github.com/tumi-soft/okami",
+  "license": "apache-2.0",
+  "authors": [
+    {
+      "name": "Michal Tuček",
+      "email": "michaltk1@gmail.com"
     }
+  ],
+  "require": {
+    "php": ">=7.4",
+    "ext-pdo": "*",
+    "vlucas/phpdotenv": "^5.2",
+    "filp/whoops": "^2.9"
+  },
+  "require-dev": {},
+  "config": {
+    "process-timeout": 0
+  },
+  "autoload": {
+    "psr-4": {
+      "Okami\\Core\\": "./"
+    }
+  },
+  "autoload-dev": {},
+  "scripts": {
+    "start": "php -S localhost:8080 -t public"
+  }
 }

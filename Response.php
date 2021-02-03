@@ -10,13 +10,22 @@ namespace Okami\Core;
  */
 class Response
 {
-    public $body = '';
+    /**
+     * @var string
+     */
+    public string $body = '';
 
+    /**
+     * @param int $code
+     */
     public function setStatusCode(int $code)
     {
         http_response_code($code);
     }
 
+    /**
+     * @param string $url
+     */
     public function redirect(string $url)
     {
         header('Location: ' . $url);
