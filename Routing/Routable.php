@@ -33,13 +33,12 @@ abstract class Routable
 
     /**
      * @param string $path
-     * @param callable $callable
      *
      * @return RouteGroup
      */
-    public function group(string $path, callable $callable): RouteGroup
+    public function group(string $path): RouteGroup
     {
-        $routeGroup = new RouteGroup($this->getPath($path), $callable);
+        $routeGroup = new RouteGroup($this->getPath($path));
         $this->routeCollection->addRouteGroup($routeGroup);
 
         return $routeGroup;
