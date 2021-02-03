@@ -2,6 +2,8 @@
 
 namespace Okami\Core\Routing;
 
+use Okami\Core\Traits\WithMiddlewaresTrait;
+
 /**
  * Class RouteGroup
  *
@@ -10,6 +12,11 @@ namespace Okami\Core\Routing;
  */
 class RouteGroup extends Routable
 {
+    use WithMiddlewaresTrait {
+        WithMiddlewaresTrait::addMiddleware as private;
+        WithMiddlewaresTrait::addMiddlewares as private;
+    }
+
     /**
      * RouteGroup constructor.
      *
@@ -19,5 +26,33 @@ class RouteGroup extends Routable
     {
         $this->pathRoot = $path;
         parent::__construct();
+    }
+
+    /**
+     * @param string $middleware
+     *
+     * @return $this
+     */
+    public function withMiddleware(string $middleware): RouteGroup
+    {
+        $this->withMiddlewares([$middleware]);
+
+        return $this;
+    }
+
+    /**
+     * @param array $middlewares
+     *
+     * @return $this
+     */
+    public function withMiddlewares(array $middlewares): RouteGroup
+    {
+        foreach ($this->routeCollection->getRoutes() as $method => $routes) {
+            foreach ($routes as $route) {
+                $route->addMiddlewares($middlewares);
+            }
+        }
+
+        return $this;
     }
 }
