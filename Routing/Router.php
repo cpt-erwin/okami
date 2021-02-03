@@ -173,6 +173,12 @@ class Router
         }
     }
 
+    /**
+     * @param string $method
+     * @param string $path
+     *
+     * @return Route|null
+     */
     private function getRoute(string $method, string $path): ?Route
     {
         /** @var Route $route */
