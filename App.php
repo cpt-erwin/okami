@@ -20,18 +20,27 @@ class App
 
     public static string $ROOT_DIR;
 
+    public static App $app;
+
+    public Request $request;
+
+    public Response $response;
+
+    public Router $router;
+
+    public Database $db;
+
+    public Session $session;
+
+    public View $view;
+
     private bool $debug;
 
-    public string $layout = 'main';
-    public Router $router;
-    public Request $request;
-    public Response $response;
-    public Session $session;
-    public Database $db;
-    public View $view;
-    public static App $app;
-    public ?Controller $controller = null;
     private array $callstack = [];
+
+    public string $layout = 'main';
+
+    public ?Controller $controller = null;
 
     public function __construct(string $rootPath, array $config)
     {
@@ -39,18 +48,17 @@ class App
         self::$app = $this;
         $this->request = new Request();
         $this->response = new Response();
-        $this->session = new Session();
         $this->router = new Router($this->request, $this->response);
+        $this->db = new Database($config['db']);
+        $this->session = new Session();
         $this->view = new View();
 
         $this->debug = $config['debug'] ?: false;
-        if($this->debug) {
+        if ($this->debug) {
             $whoops = new \Whoops\Run;
             $whoops->pushHandler(new \Whoops\Handler\PrettyPageHandler);
             $whoops->register();
         }
-
-        $this->db = new Database($config['db']);
     }
 
     /**
@@ -58,12 +66,11 @@ class App
      */
     public function run()
     {
-        // FIXME: Call App Middleware
         try {
             $response = $this->router->resolve();
             echo $response->body;
         } catch (Exception $e) {
-            if($this->debug) {
+            if ($this->debug) {
                 throw $e;
             } else {
                 $this->response->setStatusCode($e->getCode());
@@ -114,7 +121,9 @@ class App
             throw new LogicException('Trying to execute an empty callstack!');
         }
 
-        if (is_string($next)) $next = new $next($this->callstack);
+        if (is_string($next)) {
+            $next = new $next($this->callstack);
+        }
 
         if (!$next instanceof ExecutableInterface) {
             throw new LogicException('Callstack contains an object which is not an instance of Executable!');
