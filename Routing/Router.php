@@ -2,7 +2,6 @@
 
 namespace Okami\Core\Routing;
 
-use LogicException;
 use Okami\Core\App;
 use Okami\Core\Exceptions\NotFoundException;
 use Okami\Core\Request;
@@ -65,7 +64,6 @@ class Router extends Routable
      */
     private function getRoute(string $method, string $path): ?Route
     {
-        /** @var Route $route */
         foreach ($this->getRoutes($method) as $route) {
             if($route->match($path)) {
                 return $route;

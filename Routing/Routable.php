@@ -18,10 +18,13 @@ abstract class Routable
     /**
      * FIXME: Create RouteCollection instead of routes array
      *
-     * @var array
+     * @var array<string, Route[]>
      */
     public array $routes = [];
 
+    /**
+     * @var RouteGroup[]
+     */
     public array $routeGroups = [];
 
     /**
@@ -107,8 +110,10 @@ abstract class Routable
     /**
      * @param string $path
      * @param string|callable|array $callback
+     *
+     * @return Route
      */
-    public function any(string $path, $callback)
+    public function any(string $path, $callback): Route
     {
         return $this->map([
             Request::GET,
@@ -179,7 +184,7 @@ abstract class Routable
     /**
      * @param string $method
      *
-     * @return array
+     * @return array<string, Route[]>
      */
     public function getRoutes(string $method): array
     {
