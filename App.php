@@ -7,6 +7,8 @@ use LogicException;
 use Okami\Core\Interfaces\ExecutableInterface;
 use Okami\Core\Routing\Router;
 use Okami\Core\Traits\WithMiddlewaresTrait;
+use Whoops\Handler\PrettyPageHandler;
+use Whoops\Run;
 
 /**
  * Class App
@@ -27,6 +29,11 @@ class App
      * @var App
      */
     public static App $app;
+
+    /**
+     * @var Logger
+     */
+    private Logger $logger;
 
     /**
      * @var Request
@@ -83,6 +90,7 @@ class App
     {
         self::$ROOT_DIR = $rootPath;
         self::$app = $this;
+        $this->logger = new Logger($config['logFile']);
         $this->request = new Request();
         $this->response = new Response();
         $this->router = new Router($this->request, $this->response);
@@ -91,8 +99,8 @@ class App
 
         $this->debug = isset($config['debug']) && is_bool($config['debug']) ? $config['debug'] : false;
         if ($this->debug) {
-            $whoops = new \Whoops\Run;
-            $whoops->pushHandler(new \Whoops\Handler\PrettyPageHandler);
+            $whoops = new Run;
+            $whoops->pushHandler(new PrettyPageHandler);
             $whoops->register();
         }
     }
