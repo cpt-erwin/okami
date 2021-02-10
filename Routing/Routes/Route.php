@@ -1,6 +1,6 @@
 <?php
 
-namespace Okami\Core\Routing;
+namespace Okami\Core\Routing\Routes;
 
 use LogicException;
 use Okami\Core\Interfaces\ExecutableInterface;

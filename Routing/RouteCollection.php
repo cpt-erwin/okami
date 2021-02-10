@@ -2,7 +2,8 @@
 
 namespace Okami\Core\Routing;
 
-use Okami\Core\Request;
+use Okami\Core\HTTPMethod;
+use Okami\Core\Routing\Routes\Route;
 
 /**
  * Class RouteCollection
@@ -16,12 +17,12 @@ class RouteCollection
      * @var array<string, Route[]>
      */
     private array $routes = [
-        Request::GET => [],
-        Request::POST => [],
-        Request::PUT => [],
-        Request::DELETE => [],
-        Request::OPTIONS => [],
-        Request::PATCH => []
+        HTTPMethod::GET => [],
+        HTTPMethod::POST => [],
+        HTTPMethod::PUT => [],
+        HTTPMethod::DELETE => [],
+        HTTPMethod::OPTIONS => [],
+        HTTPMethod::PATCH => []
     ];
 
     /**

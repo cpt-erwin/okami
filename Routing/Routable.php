@@ -3,7 +3,12 @@
 namespace Okami\Core\Routing;
 
 use LogicException;
+use Okami\Core\HTTPMethod;
 use Okami\Core\Request;
+use Okami\Core\Routing\Routes\ControllerRoute;
+use Okami\Core\Routing\Routes\FunctionRoute;
+use Okami\Core\Routing\Routes\Route;
+use Okami\Core\Routing\Routes\TemplateRoute;
 
 /**
  * Class Routable
@@ -59,17 +64,6 @@ abstract class Routable
     }
 
     /**
-     * @param string $path
-     * @param string|callable|array $callback
-     *
-     * @return Route
-     */
-    public function get(string $path, $callback): Route
-    {
-        return $this->map([Request::GET], $path, $callback);
-    }
-
-    /**
      * @param array $methods
      * @param string $path
      * @param string|callable|array $callback
@@ -110,9 +104,20 @@ abstract class Routable
      *
      * @return Route
      */
+    public function get(string $path, $callback): Route
+    {
+        return $this->map([HTTPMethod::GET], $path, $callback);
+    }
+
+    /**
+     * @param string $path
+     * @param string|callable|array $callback
+     *
+     * @return Route
+     */
     public function post(string $path, $callback): Route
     {
-        return $this->map([Request::POST], $path, $callback);
+        return $this->map([HTTPMethod::POST], $path, $callback);
     }
 
     /**
@@ -123,7 +128,7 @@ abstract class Routable
      */
     public function put(string $path, $callback): Route
     {
-        return $this->map([Request::PUT], $path, $callback);
+        return $this->map([HTTPMethod::PUT], $path, $callback);
     }
 
     /**
@@ -134,7 +139,7 @@ abstract class Routable
      */
     public function delete(string $path, $callback): Route
     {
-        return $this->map([Request::DELETE], $path, $callback);
+        return $this->map([HTTPMethod::DELETE], $path, $callback);
     }
 
     /**
@@ -145,7 +150,7 @@ abstract class Routable
      */
     public function options(string $path, $callback): Route
     {
-        return $this->map([Request::OPTIONS], $path, $callback);
+        return $this->map([HTTPMethod::OPTIONS], $path, $callback);
     }
 
     /**
@@ -156,7 +161,7 @@ abstract class Routable
      */
     public function patch(string $path, $callback): Route
     {
-        return $this->map([Request::PATCH], $path, $callback);
+        return $this->map([HTTPMethod::PATCH], $path, $callback);
     }
 
     /**
@@ -168,12 +173,12 @@ abstract class Routable
     public function any(string $path, $callback): Route
     {
         return $this->map([
-            Request::GET,
-            Request::POST,
-            Request::PUT,
-            Request::DELETE,
-            Request::OPTIONS,
-            Request::PATCH
+            HTTPMethod::GET,
+            HTTPMethod::POST,
+            HTTPMethod::PUT,
+            HTTPMethod::DELETE,
+            HTTPMethod::OPTIONS,
+            HTTPMethod::PATCH
         ], $path, $callback);
     }
 

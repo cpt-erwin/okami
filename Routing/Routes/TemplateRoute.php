@@ -1,6 +1,6 @@
 <?php
 
-namespace Okami\Core\Routing;
+namespace Okami\Core\Routing\Routes;
 
 use Okami\Core\App;
 use Okami\Core\Response;

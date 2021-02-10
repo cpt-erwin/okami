@@ -6,6 +6,7 @@ use Okami\Core\App;
 use Okami\Core\Exceptions\NotFoundException;
 use Okami\Core\Request;
 use Okami\Core\Response;
+use Okami\Core\Routing\Routes\Route;
 
 /**
  * Class Router
