@@ -54,11 +54,6 @@ class App
     public Session $session;
 
     /**
-     * @var View
-     */
-    public View $view;
-
-    /**
      * @var string
      */
     public string $layout = 'main';
@@ -93,7 +88,6 @@ class App
         $this->router = new Router($this->request, $this->response);
         $this->db = new Database($config['db']);
         $this->session = new Session();
-        $this->view = new View();
 
         $this->debug = isset($config['debug']) && is_bool($config['debug']) ? $config['debug'] : false;
         if ($this->debug) {
@@ -116,9 +110,7 @@ class App
                 throw $e;
             } else {
                 $this->response->setStatusCode($e->getCode());
-                echo $this->view->renderView('_error', [
-                    'exception' => $e
-                ]);
+                echo $this->response->body;
             }
         }
     }

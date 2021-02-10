@@ -21,17 +21,6 @@ abstract class Controller
     private string $layout = 'main';
 
     /**
-     * @param string $view
-     * @param array $params
-     *
-     * @return string|string[]
-     */
-    public function render(string $view, array $params = [])
-    {
-        return App::$app->view->renderView($view, $params);
-    }
-
-    /**
      * @return string
      */
     public function getLayout(): string
