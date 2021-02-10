@@ -22,10 +22,8 @@ class ControllerRoute extends Route
         App::$app->setController(new $callback[0]()); // create instance of passed controller
         App::$app->controller->action = $callback[1];
         $callback[0] = App::$app->getController();
-        // FIXME: Don't create new response but use Apps response instead!
-        $response = new Response();
-        $response->body = call_user_func($callback, App::$app->request, App::$app->response, $this->getParams());
+        call_user_func($callback, App::$app->request, App::$app->response, $this->getParams());
 
-        return $response;
+        return App::$app->response;
     }
 }

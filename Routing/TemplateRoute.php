@@ -18,10 +18,8 @@ class TemplateRoute extends Route
      */
     public function execute(): Response
     {
-        // FIXME: Don't create new response but use Apps response instead!
-        $response = new Response();
-        $response->body = App::$app->view->renderView($this->getCallback());
+        App::$app->response->body = file_get_contents(App::$ROOT_DIR . '/views/' . $this->getCallback());
 
-        return $response;
+        return App::$app->response;
     }
 }
