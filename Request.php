@@ -10,13 +10,6 @@ namespace Okami\Core;
  */
 class Request
 {
-    const GET = 'get';
-    const POST = 'post';
-    const PUT = 'put';
-    const DELETE = 'delete';
-    const OPTIONS = 'options';
-    const PATCH = 'patch';
-
     /**
      * @return string
      */
@@ -33,27 +26,11 @@ class Request
     }
 
     /**
-     * @return bool
-     */
-    public function isGet(): bool
-    {
-        return $this->method() === 'get';
-    }
-
-    /**
      * @return string
      */
     public function method(): string
     {
         return strtolower($_SERVER['REQUEST_METHOD']);
-    }
-
-    /**
-     * @return bool
-     */
-    public function isPost(): bool
-    {
-        return $this->method() === 'post';
     }
 
     /**
@@ -80,5 +57,63 @@ class Request
         }
 
         return $body;
+    }
+
+    /**
+     * @param string $method
+     *
+     * @return bool
+     */
+    public function isMethod(string $method): bool
+    {
+        return $this->method() === $method;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isGet(): bool
+    {
+        return $this->isMethod(HTTPMethod::GET);
+    }
+
+    /**
+     * @return bool
+     */
+    public function isPost(): bool
+    {
+        return $this->isMethod(HTTPMethod::POST);
+    }
+
+    /**
+     * @return bool
+     */
+    public function isPut(): bool
+    {
+        return $this->isMethod(HTTPMethod::PUT);
+    }
+
+    /**
+     * @return bool
+     */
+    public function isDelete(): bool
+    {
+        return $this->isMethod(HTTPMethod::DELETE);
+    }
+
+    /**
+     * @return bool
+     */
+    public function isOptions(): bool
+    {
+        return $this->isMethod(HTTPMethod::OPTIONS);
+    }
+
+    /**
+     * @return bool
+     */
+    public function isPatch(): bool
+    {
+        return $this->isMethod(HTTPMethod::PATCH);
     }
 }
