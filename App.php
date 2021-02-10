@@ -33,7 +33,7 @@ class App
     /**
      * @var Logger
      */
-    private Logger $logger;
+    public Logger $logger;
 
     /**
      * @var Request
