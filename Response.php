@@ -11,9 +11,18 @@ namespace Okami\Core;
 class Response
 {
     /**
-     * @var string
+     * @var ResponseBody
      */
-    public string $body = '';
+    public ResponseBody $body;
+
+    /**
+     * Response constructor.
+     *
+     */
+    public function __construct()
+    {
+        $this->body = new ResponseBody();
+    }
 
     /**
      * @param int $code

@@ -18,7 +18,7 @@ class TemplateRoute extends Route
      */
     public function execute(): Response
     {
-        App::$app->response->body = file_get_contents(App::$ROOT_DIR . '/views/' . $this->getCallback());
+        App::$app->response->body->html = file_get_contents(App::$ROOT_DIR . '/views/' . $this->getCallback());
 
         return App::$app->response;
     }
