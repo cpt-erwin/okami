@@ -65,17 +65,6 @@ abstract class Route implements ExecutableInterface
      */
     private function analyzePath(string $path, string $root = ''): array
     {
-        // paths example
-        // ''
-        // '/'
-        // '/posts'
-        // '/posts/{id}'
-        // '/posts/{id:id}'
-        // '/posts[/{id:id}]'
-        // '/gallery/{galleryID:id}/image/{imageID:id}'
-        // '/gallery/{galleryID:id}[/image/{imageID:id}]'
-        // '/stock/{stockID:id}[/supplier/{supplierID:id}[/product/{productID:id}]]'
-
         $matches = preg_split('/(\[.*?\]$)|(\{.*?\})/', $path, -1, PREG_SPLIT_DELIM_CAPTURE | PREG_SPLIT_NO_EMPTY);
         if ($matches === false) {
             throw new LogicException("Unexpected exception occurred while testing the path against the REGEX.");
@@ -88,20 +77,7 @@ abstract class Route implements ExecutableInterface
             $paths[] = $matches[0];
         } else {
             /** WILDCARD PATH **/
-
-            // When the route like this occurs
-            // '/gallery/{galleryID:id}[/image/{imageID:id}]'
-            // we should generate two routes starting from the last optional one to first mandatory
-            // 1) '/gallery/{galleryID:id}/image/{imageID:id}'
-            // 2) '/gallery/{galleryID:id}'
-            // for the second case we still want imageID to be set with value null
-
             foreach ($matches as $match) {
-                // If $match starts with { and ends with } then remove those signs
-                // and split string by : where first element of the returned array
-                // will be the name of the param and the second element will be its
-                // regex pattern to be matched.
-                // If the array has only one element the :any pattern will be selected.
                 if (preg_match('/^\{.*?\}$/', $match)) {
                     $param = explode(':', str_replace(['{', '}'], '', $match));
                     if (sizeof($param) === 1) {
@@ -162,7 +138,7 @@ abstract class Route implements ExecutableInterface
                     array_slice($arguments, 0, sizeof($this->params))); // initialize params
                 array_walk($this->params, function (&$value) {
                     $value = $value ?: null;
-                }); // set empty params to null value
+                });
 
                 return true;
             }
